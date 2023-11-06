@@ -41,6 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </head>
 
 <body>
+
     <?php
     if ($success) {
         echo '<div class="alert alert-success" role="alert">
@@ -52,6 +53,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             </div>';
     }
     ?>
+
     <div class='container'>
         <div class='title'>
             <h1>Student Registration</h1>
@@ -179,7 +181,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         <p>Already have an account? </p>
                         <a href="login.php" class='link ms-1'>Login Now</a>
                     </div>
-
                 </div>
             </form>
         </div>

@@ -1,4 +1,5 @@
 <?php
+session_start();
 $success = 0;
 $error = 0;
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -16,6 +17,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if ($number_of_rows) {
         $success = 1;
+        $_SESSION["email"] = $email;
+        header("Location: dashboard.php");
     } else {
         $error = 1;
     }
@@ -33,18 +36,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </head>
 
 <body>
+
     <?php
     if ($success) {
         echo '<div class="alert alert-success" role="alert">
             Login successful
             </div>';
-        header("Location: home.php");
     } else if ($error) {
         echo '<div class="alert alert-danger" role="alert">
-            Login failed
+            Wrong Email or Password
             </div>';
     }
     ?>
+
     <div class='container'>
         <div class='title'>
             <h1>Student Login</h1>
@@ -68,7 +72,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     </div>
                 </div>
                 <div class='right'>
-                    <img src="https://img.freepik.com/free-photo/computer-security-with-login-password-padlock_107791-16191.jpg?w=740&t=st=1699184214~exp=1699184814~hmac=b7469992dbca75115172f6379ca4c9afc37712f8cba441bd4906b1ec0a710138" alt="" width='100%' height="80%">
+                    <img src="login.avif" alt="" width='100%' height="80%">
                 </div>
             </form>
         </div>
