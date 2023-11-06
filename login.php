@@ -6,15 +6,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $email = $_POST['email'];
     $password = $_POST['password'];
 
-    $sql = "SELECT * FROM `registration` WHERE email = ? ";
+    $sql = "SELECT * FROM `registration` WHERE email = :email AND password = :password";
 
     $stmt = $pdo->prepare($sql);
 
-    $stmt->execute([$email]);
+    $stmt->execute(['email' => $email, 'password' => $password]);
 
     $number_of_rows = $stmt->fetchColumn();
 
-    if ($number_of_rows === 1) {
+    if ($number_of_rows) {
         $success = 1;
     } else {
         $error = 1;
@@ -38,6 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         echo '<div class="alert alert-success" role="alert">
             Login successful
             </div>';
+        header("Location: home.php");
     } else if ($error) {
         echo '<div class="alert alert-danger" role="alert">
             Login failed
