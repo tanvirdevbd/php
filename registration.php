@@ -1,7 +1,7 @@
 <?php
 $success = 0;
 $error = 0;
-if($_SERVER['REQUEST_METHOD'] == 'POST'){
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     include 'connect.php';
     $firstname = $_POST['firstname'];
     $middlename = $_POST['middlename'];
@@ -19,13 +19,12 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
     $sql = "INSERT INTO `registration`(firstname, middlename, lastname, phone, email, password, retypepassword, class, gender, zila, upazila, address) VALUES(:firstname, :middlename, :lastname, :phone, :email, :password, :retypepassword, :class, :gender, :upazila, :zila, :address)";
 
     $stmt = $pdo->prepare($sql);
-    
-    $result=$stmt->execute(['firstname' => $firstname, 'middlename' => $middlename, 'lastname' => $lastname,'phone' => $phone,  'email' => $email,  'password' => $password,  'retypepassword' => $retypepassword, 'class' => $class, 'gender' => $gender, 'upazila' => $upazila, 'zila' => $zila, 'address' => $address]);
 
-    if($result){
+    $result = $stmt->execute(['firstname' => $firstname, 'middlename' => $middlename, 'lastname' => $lastname, 'phone' => $phone,  'email' => $email,  'password' => $password,  'retypepassword' => $retypepassword, 'class' => $class, 'gender' => $gender, 'upazila' => $upazila, 'zila' => $zila, 'address' => $address]);
+
+    if ($result) {
         $success = 1;
-    }
-    else{
+    } else {
         $error = 1;
     }
 }
@@ -37,82 +36,67 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Student Registration</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
     <?php
-        if($success){
-            echo '<div class="alert alert-success" role="alert">
+    if ($success) {
+        echo '<div class="alert alert-success" role="alert">
             Registration successful
             </div>';
-        }       
-        else if($error){
-            echo '<div class="alert alert-danger" role="alert">
+    } else if ($error) {
+        echo '<div class="alert alert-danger" role="alert">
             Registration failed
             </div>';
-        }       
+    }
     ?>
-    <div class="d-flex my-2">
-        <div class="mt-5">
-            <img src="https://www.indiafilings.com/learn/wp-content/uploads/2023/01/shutterstock_257823118-1.jpg"
-                width="600px" alt="">
+    <div class='container'>
+        <div class='title'>
+            <h1>Student Registration</h1>
         </div>
-        <div>
-            <div class='container mb-2'>
-                <form action='registration.php' method='post'>
-                    <div class='d-flex'>
-
-                        <!-- firstname  -->
-                        <div class="mb-2 me-2">
-                            <label for="firstname" class="form-label">First Name</label>
-                            <input type="text" class="form-control" id="firstname" name="firstname">
-                        </div>
-
-                        <!-- middlename  -->
-                        <div class="mb-2 me-2">
-                            <label for="middlename" class="form-label">Middle Name</label>
-                            <input type="text" class="form-control" id="middlename" name="middlename">
-                        </div>
-
-                        <!-- lastname  -->
-                        <div class="mb-2 me-2">
-                            <label for="lastname" class="form-label">Last Name</label>
-                            <input type="text" class="form-control" id="lastname" name="lastname">
-                        </div>
+        <div class='form-section'>
+            <form action='registration.php' method='post'>
+                <div class='left'>
+                    <!-- firstname  -->
+                    <div class="mb-2 me-2">
+                        <input type="text" class="form-control" id="firstname" name="firstname" placeholder="Enter First Name">
                     </div>
 
-                   <div class='d-flex'>
-                     <!-- phone  -->
-                     <div class="mb-2 me-4 w-50">
-                        <label for="phone" class="form-label">Phone </label>
-                        <input type="text" class="form-control" id="phone" name="phone">
+                    <!-- middlename  -->
+                    <div class="mb-2 me-2">
+                        <input type="text" class="form-control" id="middlename" name="middlename" placeholder="Enter Middle Name">
                     </div>
 
-                     <!-- email -->
-                     <div class="mb-2 w-50">
-                        <label for="email" class="form-label">Email </label>
-                        <input type="email" class="form-control" id="email" name="email" required>
+                    <!-- lastname  -->
+                    <div class="mb-2 me-2">
+                        <input type="text" class="form-control" id="lastname" name="lastname" placeholder="Enter Last Name">
                     </div>
-                   </div>
-
+                    <!-- email -->
+                    <div class="mb-2  me-2">
+                        <input type="email" class="form-control" id="email" name="email" required placeholder="Enter Email">
+                    </div>
                     <!-- password -->
-                    <div class="mb-2">
-                        <label for="password" class="form-label">Password </label>
-                        <input type="password" class="form-control" id="password" name="password" required>
+                    <div class="mb-2  me-2">
+                        <input type="password" class="form-control" id="password" name="password" placeholder="Enter Password" required>
                     </div>
 
                     <!-- re type password -->
-                    <div class="mb-2">
-                        <label for="retypepassword" class="form-label">Re-type Password</label>
-                        <input type="password" class="form-control" id="retypepassword" name="retypepassword" required>
+                    <div class="mb-2 me-2">
+                        <input type="password" class="form-control" id="retypepassword" name="retypepassword" required placeholder="Re Enter Password">
                     </div>
+                    <!-- phone  -->
+                    <div class="mb-2 me-2">
+                        <input type="text" class="form-control" id="phone" name="phone" placeholder="Enter Phone Number">
+                    </div>
+                </div>
+                <div class='right'>
 
                     <!-- class  -->
                     <div class="mb-2">
-                        <label for="class" class="form-label me-5">Class: </label>
-                        <select name="class" id="class  w-100">
+                        <label for="class" class="form-label me-4  name">Class: </label>
+                        <select name="class" id="class" class="select-area">
                             <option value="1">1</option>
                             <option value="2">2</option>
                             <option value="3">3</option>
@@ -123,24 +107,24 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
                             <option value="8">8</option>
                             <option value="9">9</option>
                             <option value="10">10</option>
+                            <option value="11">11</option>
+                            <option value="12">12</option>
                         </select>
                     </div>
-
                     <!-- gender  -->
-                    <div class="mb-2 d-flex">
-                        <label for="gender" class="form-label me-3 align-items-center">Gender:  </label> <br/>
+                    <div class="mb-2">
+                        <label for="gender" class="form-label me-3 name">Gender: </label>
                         <input type="radio" id="male" name="gender" value="MALE">
-                        <label for="html" class='mx-2'>Male</label><br>
+                        <label for="html" class='mx-1'>Male</label>
                         <input type="radio" id="female" name="gender" value="FEMALE">
-                        <label for="html" class='mx-2'>Female</label><br>
+                        <label for="html" class='mx-1'>Female</label>
                         <input type="radio" id="others" name="gender" value="OTHERS">
-                        <label for="html"  class='mx-2'>Others</label><br>
+                        <label for="html" class='mx-1'>Others</label>
                     </div>
-
                     <!-- zila  -->
                     <div class="mb-2">
-                        <label for="zila" class="form-label me-5">Zila:  </label>
-                        <select name="zila" id="zila">
+                        <label for="zila" class="form-label me-5  name">Zila: </label>
+                        <select name="zila" id="zila" class="select-area">
                             <option value="dhaka">Dhaka</option>
                             <option value="faridpur">Faridpur</option>
                             <option value="gazipur">Gazipur</option>
@@ -155,11 +139,10 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
                             <option value="jashore">jashore</option>
                         </select>
                     </div>
-
                     <!-- upazila  -->
                     <div class="mb-2">
-                        <label for="upazila" class="form-label me-3">Upazila:  </label>
-                        <select name="upazila" id="upazila">
+                        <label for="upazila" class="form-label me-3 name">Upazila: </label>
+                        <select name="upazila" id="upazila" class="select-area">
                             <option value="gazipur-s">Gazipur-S</option>
                             <option value="patuakhali-s">Patuakhali-S</option>
                             <option value="nabinagar">Nabinagar</option>
@@ -186,15 +169,19 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
                             <option value="golapganj">Golapganj</option>
                         </select>
                     </div>
-
                     <!-- address  -->
                     <div class="mb-2">
-                        <label for="address" class="form-label">Address </label>
-                        <textarea class="form-control" id="address" name="address" rows="1" cols="50"></textarea>
+                        <textarea class="form-control me-2" id="address" name="address" rows="3" cols="50" placeholder="Enter Address"></textarea>
                     </div>
-                    <button type="submit" class="btn btn-primary w-100">Register</button>
-                </form>
-            </div>
+                    <!-- register button  -->
+                    <button type="submit" class="reg-btn w-100">Register</button>
+                    <div class='d-flex mt-2'>
+                        <p>Already have an account? </p>
+                        <a href="login.php" class='link ms-1'>Login Now</a>
+                    </div>
+
+                </div>
+            </form>
         </div>
     </div>
 </body>
