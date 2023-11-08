@@ -12,15 +12,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $retypepassword = $_POST['retypepassword'];
     $class = $_POST['class'];
     $gender = $_POST['gender'];
+    $division = $_POST['division'];
+    $district = $_POST['district'];
     $upazila = $_POST['upazila'];
-    $zila = $_POST['zila'];
     $address = $_POST['address'];
 
-    $sql = "INSERT INTO `registration`(firstname, middlename, lastname, phone, email, password, retypepassword, class, gender, zila, upazila, address) VALUES(:firstname, :middlename, :lastname, :phone, :email, :password, :retypepassword, :class, :gender, :upazila, :zila, :address)";
+    $sql = "INSERT INTO `registration`(firstname, middlename, lastname, phone, email, password, retypepassword, class, gender, division, district, upazila, address) VALUES(:firstname, :middlename, :lastname, :phone, :email, :password, :retypepassword, :class, :gender, :division, :district, :upazila,  :address)";
 
     $stmt = $pdo->prepare($sql);
 
-    $result = $stmt->execute(['firstname' => $firstname, 'middlename' => $middlename, 'lastname' => $lastname, 'phone' => $phone,  'email' => $email,  'password' => $password,  'retypepassword' => $retypepassword, 'class' => $class, 'gender' => $gender, 'upazila' => $upazila, 'zila' => $zila, 'address' => $address]);
+    $result = $stmt->execute(['firstname' => $firstname, 'middlename' => $middlename, 'lastname' => $lastname, 'phone' => $phone,  'email' => $email,  'password' => $password,  'retypepassword' => $retypepassword, 'class' => $class, 'gender' => $gender, 'division' => $division, 'district' => $district, 'upazila' => $upazila, 'address' => $address]);
 
     if ($result) {
         $success = 1;
@@ -92,12 +93,24 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     <div class="mb-2 me-2">
                         <input type="text" class="form-control" id="phone" name="phone" placeholder="Enter Phone Number">
                     </div>
+
+                    <!-- gender  -->
+                    <div class="mb-2">
+                        <label for="gender" class="form-label me-3 name">Gender: </label>
+                        <input type="radio" id="male" name="gender" value="MALE">
+                        <label for="html" class='mx-1'>Male</label>
+                        <input type="radio" id="female" name="gender" value="FEMALE">
+                        <label for="html" class='mx-1'>Female</label>
+                        <input type="radio" id="others" name="gender" value="OTHERS">
+                        <label for="html" class='mx-1'>Others</label>
+                    </div>
+
                 </div>
                 <div class='right'>
 
                     <!-- class  -->
                     <div class="mb-2">
-                        <label for="class" class="form-label me-4  name">Class: </label>
+                        <label for="class" class="form-label me-4 name">Class: </label>
                         <select name="class" id="class" class="select-area">
                             <option value="1">1</option>
                             <option value="2">2</option>
@@ -113,62 +126,26 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             <option value="12">12</option>
                         </select>
                     </div>
-                    <!-- gender  -->
+
+                    <!-- division  -->
                     <div class="mb-2">
-                        <label for="gender" class="form-label me-3 name">Gender: </label>
-                        <input type="radio" id="male" name="gender" value="MALE">
-                        <label for="html" class='mx-1'>Male</label>
-                        <input type="radio" id="female" name="gender" value="FEMALE">
-                        <label for="html" class='mx-1'>Female</label>
-                        <input type="radio" id="others" name="gender" value="OTHERS">
-                        <label for="html" class='mx-1'>Others</label>
+                        <label for="division" class="form-label me-2  name">Division: </label>
+                        <select name="division" id="division" class="select-area">
+                            <option value="">Select Division</option>
+                        </select>
                     </div>
-                    <!-- zila  -->
+                    <!-- district  -->
                     <div class="mb-2">
-                        <label for="zila" class="form-label me-5  name">Zila: </label>
-                        <select name="zila" id="zila" class="select-area">
-                            <option value="dhaka">Dhaka</option>
-                            <option value="faridpur">Faridpur</option>
-                            <option value="gazipur">Gazipur</option>
-                            <option value="gopalganj">Gopalganj</option>
-                            <option value="narayanganj">Narayanganj</option>
-                            <option value="barisal">Barisal</option>
-                            <option value="pirojpur">Pirojpur</option>
-                            <option value="khulna">Khulna</option>
-                            <option value="kushtia">Kushtia</option>
-                            <option value="magura">Magura</option>
-                            <option value="satkhira">Satkhira</option>
-                            <option value="jashore">jashore</option>
+                        <label for="district" class="form-label me-3  name">District: </label>
+                        <select name="district" id="district" class="select-area">
+                            <option value=""></option>
                         </select>
                     </div>
                     <!-- upazila  -->
                     <div class="mb-2">
                         <label for="upazila" class="form-label me-3 name">Upazila: </label>
                         <select name="upazila" id="upazila" class="select-area">
-                            <option value="gazipur-s">Gazipur-S</option>
-                            <option value="patuakhali-s">Patuakhali-S</option>
-                            <option value="nabinagar">Nabinagar</option>
-                            <option value="bandarban-s">Bandarban-S</option>
-                            <option value="chandpur-s">Chandpur-S</option>
-                            <option value="coxsbazar-s">Cox'S Bazar-S</option>
-                            <option value="teknaf">Teknaf</option>
-                            <option value="ukhiya">Ukhiya</option>
-                            <option value="titas">Titas</option>
-                            <option value="kaptai">Kaptai</option>
-                            <option value="faridpur-s">Faridpur-S</option>
-                            <option value="barishal-s">Barishal-S</option>
-                            <option value="gopalganj-s">Gopalganj-S</option>
-                            <option value="madaripur-s">Madaripur-S</option>
-                            <option value="manikganj-s">Manikganj-S</option>
-                            <option value="munshiganj-s">Munshiganj-S</option>
-                            <option value="narayanganj-s">Narayanganj-S</option>
-                            <option value="rajbari-s">Rajbari-S</option>
-                            <option value="jashore-s">Jashore-S</option>
-                            <option value="chuadanga-s">Chuadanga-S</option>
-                            <option value="kushtia-s">Kushtia-S</option>
-                            <option value="mirpur">Mirpur</option>
-                            <option value="jamalganj">Jamalganj</option>
-                            <option value="golapganj">Golapganj</option>
+                            <option value=""></option>
                         </select>
                     </div>
                     <!-- address  -->
@@ -185,6 +162,52 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             </form>
         </div>
     </div>
+
+    <script type="text/javascript" src="js/jquery.js"></script>
+    <!-- <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script> -->
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            function loadData(type, category_id) {
+                $.ajax({
+                    url: 'load-cs.php',
+                    type: 'POST',
+                    data: {
+                        type: type,
+                        id: category_id
+                    },
+                    success: function(data) {
+                        if (type === "upazilaData") {
+                            $("#upazila").html(data)
+                        } else if (type === "districtData") {
+                            $("#district").html(data)
+                        } else {
+                            $("#division").append(data)
+                        }
+                    }
+                });
+            }
+            loadData();
+
+            $("#division").on("change", function() {
+                var division = $("#division").val();
+                if (division != "") {
+                    loadData("districtData", division);
+                } else {
+                    $("#district").html("");
+                }
+            })
+
+            $("#district").on("change", function() {
+                var district = $("#district").val();
+                if (district != "") {
+                    loadData("upazilaData", district);
+                } else {
+                    $("#upazila").html("");
+                }
+            })
+        })
+    </script>
 </body>
 
 </html>
