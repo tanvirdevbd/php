@@ -72,7 +72,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     </div>
                 </div>
                 <div class='right'>
-                    <img src="login.avif" alt="" width='100%' height="80%">
+                    <img src="images/login.avif" alt="" width='100%' height="80%">
                 </div>
             </form>
         </div>

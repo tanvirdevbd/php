@@ -30,6 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 }
 ?>
+
 <!doctype html>
 <html lang="en">
 
@@ -129,7 +130,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                     <!-- division  -->
                     <div class="mb-2">
-                        <label for="division" class="form-label me-2  name">Division: </label>
+                        <label for="division" class="form-label me-2 name">Division: </label>
                         <select name="division" id="division" class="select-area">
                             <option value="">Select Division</option>
                         </select>
