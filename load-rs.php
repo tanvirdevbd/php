@@ -5,12 +5,14 @@ $db_password = '';
 $conn = new PDO('mysql:host=localhost;dbname=studentforms', $db_username, $db_password);
 $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-$sql = "SELECT * FROM registration";
+$sql = "SELECT * FROM registration WHERE email={$_POST['id']}";
 
 $stmt = $conn->prepare($sql);
 
 $stmt->execute();
-
+// echo "<pre>";
+// print_r($res);
+// die;
 $str = "";
 while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
     $trSingle = "

@@ -51,11 +51,15 @@
 
         <script type="text/javascript" src="js/jquery.js"></script>
         <script type="text/javascript">
+            var email = '<?php echo $_SESSION['email']; ?>';
             $(document).ready(function() {
                 function loadData() {
                     $.ajax({
-                        url: 'registered-students.php',
+                        url: 'load-rs.php',
                         type: 'POST',
+                        data: {
+                            id: email
+                        },
                         success: function(data) {
                             $("#registered_students").html(data)
                         }
