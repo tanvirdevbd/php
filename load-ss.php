@@ -30,7 +30,7 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         <td>{$row['email']}</td>
         <td>{$row['password']}</td>
         <td>
-            <a href='update-registered-students.php?id={$row['id']}'>Edit</a>
+            <a href='update-registered-students.php'>Edit</a>
         </td>    
     </tr>
     ";

@@ -113,18 +113,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     <div class="mb-2">
                         <label for="class" class="form-label me-4 name">Class: </label>
                         <select name="class" id="class" class="select-area">
-                            <option value="1">1</option>
-                            <option value="2">2</option>
-                            <option value="3">3</option>
-                            <option value="4">4</option>
-                            <option value="5">5</option>
-                            <option value="6">6</option>
-                            <option value="7">7</option>
-                            <option value="8">8</option>
-                            <option value="9">9</option>
-                            <option value="10">10</option>
-                            <option value="11">11</option>
-                            <option value="12">12</option>
                         </select>
                     </div>
 
@@ -165,7 +153,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     </div>
 
     <script type="text/javascript" src="js/jquery.js"></script>
-    <!-- <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script> -->
 
     <script type="text/javascript">
         $(document).ready(function() {
@@ -207,6 +194,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $("#upazila").html("");
                 }
             })
+
+            function loadClass() {
+                $.ajax({
+                    url: 'load-cs.php',
+                    type: 'POST',
+                    data: {
+                        type: "classData"
+                    },
+                    success: function(data) {
+                        $("#class").html(data)
+                    }
+                });
+            }
+            loadClass();
         })
     </script>
 </body>

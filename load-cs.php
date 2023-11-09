@@ -5,7 +5,18 @@ $db_password = '';
 $conn = new PDO('mysql:host=localhost;dbname=studentforms', $db_username, $db_password);
 $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-if ($_POST['type'] == "") {
+if ($_POST['type'] == "classData") {
+    $sql = "SELECT * FROM class_tb";
+
+    $stmt = $conn->prepare($sql);
+
+    $stmt->execute();
+
+    $str = "";
+    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+        $str .= "<option value='{$row['id']}'>{$row['name']}</option>";
+    }
+} else if ($_POST['type'] == "") {
     $sql = "SELECT * FROM division_tb";
 
     $stmt = $conn->prepare($sql);
