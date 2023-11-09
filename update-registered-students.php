@@ -73,7 +73,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         echo '<div class="alert alert-success" role="alert">
             Updated successfully
             </div>';
-        // header('Location: dashboard.php');
         echo "<meta http-equiv='refresh' content='0;url=dashboard.php'>";
         die;
     } else if ($error) {
@@ -104,18 +103,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     <div class="mb-2 me-2">
                         <input type="text" class="form-control" id="lastname" name="lastname" placeholder="Enter Last Name" value="<?php echo $result['lastname'] ?>">
                     </div>
+
                     <!-- email -->
                     <div class="mb-2  me-2">
                         <input type="email" class="form-control" id="email" name="email" required placeholder="Enter Email" value="<?php echo $result['email'] ?>">
                     </div>
+
                     <!-- password -->
                     <div class="mb-2  me-2">
                         <input type="password" class="form-control" id="password" name="password" placeholder="Enter Password" required value="<?php echo $result['password'] ?>">
                     </div>
+
                     <!-- re type password -->
                     <div class="mb-2 me-2">
                         <input type="password" class="form-control" id="retypepassword" name="retypepassword" required placeholder="Re Enter Password" value="<?php echo $result['retypepassword'] ?>">
                     </div>
+
                     <!-- phone  -->
                     <div class=" mb-2 me-2">
                         <input type="text" class="form-control" id="phone" name="phone" placeholder="Enter Phone Number" value="<?php echo $result['phone'] ?>">
@@ -132,6 +135,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         <label for="html" class='mx-1'>Others</label>
                     </div>
                 </div>
+
                 <div class='right'>
                     <!-- class  -->
                     <div class="mb-2">
@@ -173,13 +177,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             ?>
                         </select>
                     </div>
+
                     <!-- district  -->
                     <div class="mb-2">
                         <label for="district" class="form-label me-3  name">District: </label>
                         <select name="district" id="district" class="select-area">
                             <?php
 
-                            $sql = "SELECT * FROM district_tb";
+                            $sql = "SELECT * FROM district_tb WHERE division_id={$result['division']}";
 
                             $stmt = $conn->prepare($sql);
 
@@ -193,13 +198,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             ?>
                         </select>
                     </div>
+
                     <!-- upazila  -->
                     <div class="mb-2">
                         <label for="upazila" class="form-label me-3 name">Upazila: </label>
                         <select name="upazila" id="upazila" class="select-area">
                             <?php
 
-                            $sql = "SELECT * FROM upazila_tb";
+                            $sql = "SELECT * FROM upazila_tb  WHERE district_id={$result['district']}";
 
                             $stmt = $conn->prepare($sql);
 
@@ -213,18 +219,75 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             ?>
                         </select>
                     </div>
+
                     <!-- address  -->
                     <div class="mb-2">
                         <textarea class="form-control me-2" id="address" name="address" rows="3" cols="50" placeholder="Enter Address">
                            <?php echo $result['address'] ?>
                         </textarea>
                     </div>
+
                     <!-- register button  -->
                     <button type="submit" class="reg-btn w-100">Update </button>
                 </div>
             </form>
         </div>
     </div>
+    <script type="text/javascript" src="js/jquery.js"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            function loadData(type, category_id) {
+                $.ajax({
+                    url: 'load-cs.php',
+                    type: 'POST',
+                    data: {
+                        type: type,
+                        id: category_id
+                    },
+                    success: function(data) {
+                        if (type === "upazilaData") {
+                            $("#upazila").html(data)
+                        } else if (type === "districtData") {
+                            $("#district").html(data)
+                        }
+                    }
+                });
+            }
+            loadData();
+
+            $("#division").on("change", function() {
+                var division = $("#division").val();
+                if (division != "") {
+                    loadData("districtData", division);
+                } else {
+                    $("#district").html("");
+                }
+            })
+
+            $("#district").on("change", function() {
+                var district = $("#district").val();
+                if (district != "") {
+                    loadData("upazilaData", district);
+                } else {
+                    $("#upazila").html("");
+                }
+            })
+
+            function loadClass() {
+                $.ajax({
+                    url: 'load-cs.php',
+                    type: 'POST',
+                    data: {
+                        type: "classData"
+                    },
+                    success: function(data) {
+                        $("#class").html(data)
+                    }
+                });
+            }
+            loadClass();
+        })
     </script>
 </body>
 
