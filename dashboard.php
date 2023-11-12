@@ -8,7 +8,9 @@
     echo "<b>Welcome </b>" .  $_SESSION['email']
     ?>
 
-    <a href="logout.php">Logout</a>
+    <a href="logout.php">
+        <button class="btn btn-primary">Logout </button>
+    </a>
 
 
     <!DOCTYPE html>
@@ -49,7 +51,7 @@
             </table>
         </div>
 
-        <script type="text/javascript" src="js/jquery.js"></script>
+        <script type="text/javascript" src="jquery.js"></script>
         <script type="text/javascript">
             var email = '<?php echo $_SESSION['email']; ?>';
             $(document).ready(function() {
@@ -61,6 +63,7 @@
                             id: email
                         },
                         success: function(data) {
+                            console.log(data)
                             $("#registered_students").html(data)
                         }
                     });

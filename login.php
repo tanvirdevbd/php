@@ -18,7 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($number_of_rows) {
         $success = 1;
         $_SESSION["email"] = $email;
-        header("Location: dashboard.php");
+        header("Location: profile.php");
     } else {
         $error = 1;
     }

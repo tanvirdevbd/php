@@ -143,11 +143,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         <select name="class" id="class" class="select-area">
                             <?php
                             $sql = "SELECT * FROM class_tb";
-
                             $stmt = $conn->prepare($sql);
-
                             $stmt->execute();
                             while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                                // var_dump($result['class']);
+                                // var_dump($row['id']);
+                                // die;
                             ?>
                                 <option value="<?php echo $row['id']; ?>" <?php echo ($result['class'] == $row['id']) ? "selected" : ""; ?>><?php echo $row['name']; ?>
                                 </option>
@@ -156,7 +157,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             ?>
                         </select>
                     </div>
-
                     <!-- division  -->
                     <div class="mb-2">
                         <label for="division" class="form-label me-2 name">Division: </label>
@@ -164,9 +164,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             <option value="">Select Division</option>
                             <?php
                             $sql = "SELECT * FROM division_tb";
-
                             $stmt = $conn->prepare($sql);
-
                             $stmt->execute();
                             while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                             ?>
@@ -177,7 +175,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             ?>
                         </select>
                     </div>
-
                     <!-- district  -->
                     <div class="mb-2">
                         <label for="district" class="form-label me-3  name">District: </label>
@@ -233,7 +230,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             </form>
         </div>
     </div>
-    <script type="text/javascript" src="js/jquery.js"></script>
+    <script type="text/javascript" src="jquery.js"></script>
 
     <script type="text/javascript">
         $(document).ready(function() {
@@ -250,6 +247,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             $("#upazila").html(data)
                         } else if (type === "districtData") {
                             $("#district").html(data)
+                        } else if (type === "") {
+                            $("#division").append(data)
                         }
                     }
                 });
@@ -273,20 +272,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $("#upazila").html("");
                 }
             })
-
-            function loadClass() {
-                $.ajax({
-                    url: 'load-cs.php',
-                    type: 'POST',
-                    data: {
-                        type: "classData"
-                    },
-                    success: function(data) {
-                        $("#class").html(data)
-                    }
-                });
-            }
-            loadClass();
         })
     </script>
 </body>
