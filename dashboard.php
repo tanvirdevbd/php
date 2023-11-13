@@ -20,7 +20,8 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Registered Students</title>
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+            integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     </head>
 
     <body>
@@ -30,6 +31,7 @@
                 <thead class="thead-dark">
                     <tr>
                         <th scope="col">#</th>
+                        <th scope="col">Image</th>
                         <th scope="col">First name</th>
                         <th scope="col">Middle name</th>
                         <th scope="col">Last Name</th>
@@ -53,23 +55,27 @@
 
         <script type="text/javascript" src="jquery.js"></script>
         <script type="text/javascript">
-            var email = '<?php echo $_SESSION['email']; ?>';
-            $(document).ready(function() {
-                function loadData() {
-                    $.ajax({
-                        url: 'load-rs.php',
-                        type: 'POST',
-                        data: {
-                            id: email
-                        },
-                        success: function(data) {
-                            console.log(data)
-                            $("#registered_students").html(data)
-                        }
-                    });
-                }
-                loadData();
-            })
+        var email = '<?php echo $_SESSION['email']; ?>';
+        $(document).ready(function() {
+            function loadData() {
+                $.ajax({
+                    url: 'load-rs.php',
+                    type: 'POST',
+                    data: {
+                        id: email
+                    },
+                    success: function(data) {
+                        console.log(data)
+                        $("#registered_students").html(data)
+                    }
+                });
+            }
+            loadData();
+        })
+
+        function checkdelete() {
+            return confirm(`Do you really want to delete?`)
+        }
         </script>
     </body>
 

@@ -18,7 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($number_of_rows) {
         $success = 1;
         $_SESSION["email"] = $email;
-        header("Location: profile.php");
+        header("Location: dashboard.php");
     } else {
         $error = 1;
     }
@@ -31,7 +31,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Student Registration</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <link rel="stylesheet" href="style.css">
 </head>
 
@@ -58,11 +59,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <div class='left'>
                     <!-- email -->
                     <div class="mb-4 me-2">
-                        <input type="email" class="form-control" id="email" name="email" required placeholder="Enter Email">
+                        <input type="email" class="form-control" id="email" name="email" required
+                            placeholder="Enter Email">
                     </div>
                     <!-- password -->
                     <div class="mb-4 me-2">
-                        <input type="password" class="form-control" id="password" name="password" placeholder="Enter Password" required>
+                        <input type="password" class="form-control" id="password" name="password"
+                            placeholder="Enter Password" required>
                     </div>
                     <!-- Login button  -->
                     <button type="submit" class="reg-btn w-100">Login</button>
