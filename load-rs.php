@@ -16,11 +16,11 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
     $rowNum++;
     $trSingle = "
     <tr>
-        <th scope='row'>{$rowNum}</th>
-        <td>{$row['firstname']}</td>
+        <th scope='row'>{$rowNum}</th>       
         <td>
             <img src='{$row['std_img']}' alt='Profile image' width='100' height='100'>
         </td>
+        <td>{$row['firstname']}</td>
         <td>{$row['middlename']}</td>
         <td>{$row['lastname']}</td>
         <td>{$row['phone']}</td>
@@ -34,10 +34,10 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         <td>{$row['password']}</td>
         <td>
             <a href='update-registered-students.php?id={$row['id']}'>
-             <button class='btn btn-warning'>Update </button>
+             <button class='btn btn-warning mb-2'>Update </button>
             </a>
              <a href='delete.php?id={$row['id']}'>
-             <button class='btn btn-danger' onclick='return  checkdelete()'>Delete </button>
+             <button class='btn btn-danger' onclick='return checkdelete()'>Delete </button>
             </a>
         </td>    
     </tr>

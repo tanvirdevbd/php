@@ -4,10 +4,15 @@ $db_password = '';
 
 $conn = new PDO('mysql:host=localhost;dbname=studentforms', $db_username, $db_password);
 $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-$sql = "SELECT * FROM registration WHERE id={$_GET['id']}";
+$sql = "SELECT * FROM registration WHERE id='{$_GET['id']}'";
+
 $stmt = $conn->prepare($sql);
 $stmt->execute();
 $result = $stmt->fetch(PDO::FETCH_ASSOC);
+// echo "<pre>";
+// print_r($result);
+// echo "</pre>";
+// die;
 
 $success = 0;
 $error = 0;
@@ -16,14 +21,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     include 'connect.php';
 
     $filename = $_FILES["uploadfile"]["name"];
-    $tempname =$_FILES["uploadfile"]["tmp_name"];
-    $folder = "images/".$filename;
-    move_uploaded_file($tempname,$folder);
+    $tempname = $_FILES["uploadfile"]["tmp_name"];
+    $folder = "images/" . $filename;
+    if ($folder == "images/") {
+        $folder = $result['std_img'];
+    }
+    move_uploaded_file($tempname, $folder);
 
     $firstname = $_POST['firstname'];
     $middlename = $_POST['middlename'];
     $lastname = $_POST['lastname'];
     $phone = $_POST['phone'];
+    $pattern = "/^(?:\+?88)?01[3-9$]\d{8}/";
+    if (!preg_match($pattern, $phone)) {
+        $error = "Not valid BD phone number";
+        header("Location: dashboard.php");
+        exit();
+    }
     $email = $_POST['email'];
     $password = $_POST['password'];
     $retypepassword = $_POST['retypepassword'];
@@ -33,6 +47,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $district = $_POST['district'];
     $upazila = $_POST['upazila'];
     $address = $_POST['address'];
+    if ($address == $result['address']) {
+        $address == $result['address'];
+    }
     $std_img = $folder;
 
     $sql = "UPDATE `registration`
@@ -71,8 +88,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Update Students</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <link rel="stylesheet" href="dashboard.css">
 </head>
 
@@ -84,7 +100,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             Updated successfully
             </div>';
         echo "<meta http-equiv='refresh' content='0;url=dashboard.php'>";
-        die;
     } else if ($error) {
         echo '<div class="alert alert-danger" role="alert">
             Update failed
@@ -101,58 +116,47 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <div class='left'>
                     <!-- firstname  -->
                     <div class="mb-2 me-2">
-                        <input type="text" class="form-control" id="firstname" name="firstname"
-                            placeholder="Enter First Name"
-                            value="<?php echo $result['firstname'] ? $result['firstname'] : '' ?>">
+                        <input type="text" class="form-control" id="firstname" name="firstname" placeholder="Enter First Name" value="<?php echo $result['firstname'] ? $result['firstname'] : '' ?>">
                     </div>
 
                     <!-- middlename  -->
                     <div class="mb-2 me-2">
-                        <input type="text" class="form-control" id="middlename" name="middlename"
-                            placeholder="Enter Middle Name" value="<?php echo $result['middlename'] ?>">
+                        <input type="text" class="form-control" id="middlename" name="middlename" placeholder="Enter Middle Name" value="<?php echo $result['middlename'] ?>">
                     </div>
 
                     <!-- lastname  -->
                     <div class="mb-2 me-2">
-                        <input type="text" class="form-control" id="lastname" name="lastname"
-                            placeholder="Enter Last Name" value="<?php echo $result['lastname'] ?>">
+                        <input type="text" class="form-control" id="lastname" name="lastname" placeholder="Enter Last Name" value="<?php echo $result['lastname'] ?>">
                     </div>
 
                     <!-- email -->
                     <div class="mb-2  me-2">
-                        <input type="email" class="form-control" id="email" name="email" required
-                            placeholder="Enter Email" value="<?php echo $result['email'] ?>">
+                        <input type="email" class="form-control" id="email" name="email" required placeholder="Enter Email" value="<?php echo $result['email'] ?>">
                     </div>
 
                     <!-- password -->
                     <div class="mb-2  me-2">
-                        <input type="password" class="form-control" id="password" name="password"
-                            placeholder="Enter Password" required value="<?php echo $result['password'] ?>">
+                        <input type="password" class="form-control" id="password" name="password" placeholder="Enter Password" required value="<?php echo $result['password'] ?>">
                     </div>
 
                     <!-- re type password -->
                     <div class="mb-2 me-2">
-                        <input type="password" class="form-control" id="retypepassword" name="retypepassword" required
-                            placeholder="Re Enter Password" value="<?php echo $result['retypepassword'] ?>">
+                        <input type="password" class="form-control" id="retypepassword" name="retypepassword" required placeholder="Re Enter Password" value="<?php echo $result['retypepassword'] ?>">
                     </div>
 
                     <!-- phone  -->
                     <div class=" mb-2 me-2">
-                        <input type="text" class="form-control" id="phone" name="phone" placeholder="Enter Phone Number"
-                            value="<?php echo $result['phone'] ?>">
+                        <input type="text" class="form-control" id="phone" name="phone" placeholder="Enter Phone Number" value="<?php echo $result['phone'] ?>">
                     </div>
 
                     <!-- gender  -->
                     <div class="mb-2">
                         <label for="gender" class="form-label me-3 name">Gender: </label>
-                        <input type="radio" id="male" name="gender" value="MALE"
-                            <?php echo ($result['gender'] == 'MALE') ? 'checked' : '' ?>>
+                        <input type="radio" id="male" name="gender" value="MALE" <?php echo ($result['gender'] == 'MALE') ? 'checked' : '' ?>>
                         <label for="html" class='mx-1'>Male</label>
-                        <input type="radio" id="female" name="gender" value="FEMALE"
-                            <?php echo ($result['gender'] == 'FEMALE') ? 'checked' : '' ?>>
+                        <input type="radio" id="female" name="gender" value="FEMALE" <?php echo ($result['gender'] == 'FEMALE') ? 'checked' : '' ?>>
                         <label for="html" class='mx-1'>Female</label>
-                        <input type="radio" id="others" name="gender" value="OTHERS"
-                            <?php echo ($result['gender'] == 'OTHERS') ? 'checked' : '' ?>>
+                        <input type="radio" id="others" name="gender" value="OTHERS" <?php echo ($result['gender'] == 'OTHERS') ? 'checked' : '' ?>>
                         <label for="html" class='mx-1'>Others</label>
                     </div>
                 </div>
@@ -167,14 +171,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             $stmt = $conn->prepare($sql);
                             $stmt->execute();
                             while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                                // var_dump($result['class']);
-                                // var_dump($row['id']);
-                                // die;
                             ?>
-                            <option value="<?php echo $row['id']; ?>"
-                                <?php echo ($result['class'] == $row['id']) ? "selected" : ""; ?>>
-                                <?php echo $row['name']; ?>
-                            </option>
+                                <option value="<?php echo $row['id']; ?>" <?php echo ($result['class'] == $row['id']) ? "selected" : ""; ?>>
+                                    <?php echo $row['name']; ?>
+                                </option>
                             <?php
                             }
                             ?>
@@ -191,10 +191,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             $stmt->execute();
                             while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                             ?>
-                            <option value="<?php echo $row['id']; ?>"
-                                <?php echo ($result['division'] == $row['id']) ? "selected" : ""; ?>>
-                                <?php echo $row['name']; ?>
-                            </option>
+                                <option value="<?php echo $row['id']; ?>" <?php echo ($result['division'] == $row['id']) ? "selected" : ""; ?>>
+                                    <?php echo $row['name']; ?>
+                                </option>
                             <?php
                             }
                             ?>
@@ -205,19 +204,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         <label for="district" class="form-label me-3  name">District: </label>
                         <select name="district" id="district" class="select-area">
                             <?php
-
-                            $sql = "SELECT * FROM district_tb WHERE division_id={$result['division']}";
-
-                            $stmt = $conn->prepare($sql);
-
-                            $stmt->execute();
-                            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                            if ($result['division']) {
+                                $sql = "SELECT * FROM district_tb WHERE division_id={$result['division']}";
+                                $stmt = $conn->prepare($sql);
+                                $stmt->execute();
+                                while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                             ?>
-                            <option value="<?php echo $row['id']; ?>"
-                                <?php echo ($result['district'] == $row['id']) ? "selected" : ""; ?>>
-                                <?php echo $row['name']; ?>
-                            </option>
+                                    <option value="<?php echo $row['id']; ?>" <?php echo ($result['district'] == $row['id']) ? "selected" : ""; ?>>
+                                        <?php echo $row['name']; ?>
+                                    </option>
                             <?php
+                                }
                             }
                             ?>
                         </select>
@@ -228,19 +225,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         <label for="upazila" class="form-label me-3 name">Upazila: </label>
                         <select name="upazila" id="upazila" class="select-area">
                             <?php
+                            if ($result['district']) {
+                                $sql = "SELECT * FROM upazila_tb  WHERE district_id={$result['district']}";
+                                $stmt = $conn->prepare($sql);
 
-                            $sql = "SELECT * FROM upazila_tb  WHERE district_id={$result['district']}";
-
-                            $stmt = $conn->prepare($sql);
-
-                            $stmt->execute();
-                            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                                $stmt->execute();
+                                while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                             ?>
-                            <option value="<?php echo $row['id']; ?>"
-                                <?php echo ($result['upazila'] == $row['id']) ? "selected" : ""; ?>>
-                                <?php echo $row['name']; ?>
-                            </option>
+                                    <option value="<?php echo $row['id']; ?>" <?php echo ($result['upazila'] == $row['id']) ? "selected" : ""; ?>>
+                                        <?php echo $row['name']; ?>
+                                    </option>
                             <?php
+                                }
                             }
                             ?>
                         </select>
@@ -248,10 +244,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                     <!-- address  -->
                     <div class="mb-2">
-                        <textarea class="form-control me-2" id="address" name="address" rows="3" cols="50"
-                            placeholder="Enter Address">
-                           <?php echo $result['address'] ?>
-                        </textarea>
+                        <textarea class="form-control me-2" id="address" name="address" rows="4" cols="50" placeholder="Enter Address" placeholder="Enter Address"><?php echo $result['address'] ? $result['address'] : '' ?></textarea>
                     </div>
                     <!-- image  -->
                     <div class="mb-2 me-2">
@@ -267,46 +260,46 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <script type="text/javascript" src="jquery.js"></script>
 
     <script type="text/javascript">
-    $(document).ready(function() {
-        function loadData(type, category_id) {
-            $.ajax({
-                url: 'load-cs.php',
-                type: 'POST',
-                data: {
-                    type: type,
-                    id: category_id
-                },
-                success: function(data) {
-                    if (type === "upazilaData") {
-                        $("#upazila").html(data)
-                    } else if (type === "districtData") {
-                        $("#district").html(data)
-                    } else if (type === "") {
-                        $("#division").append(data)
+        $(document).ready(function() {
+            function loadData(type, category_id) {
+                $.ajax({
+                    url: 'load-cs.php',
+                    type: 'POST',
+                    data: {
+                        type: type,
+                        id: category_id
+                    },
+                    success: function(data) {
+                        if (type === "upazilaData") {
+                            $("#upazila").html(data)
+                        } else if (type === "districtData") {
+                            $("#district").html(data)
+                        } else if (type === "") {
+                            $("#division").append(data)
+                        }
                     }
+                });
+            }
+            loadData();
+
+            $("#division").on("change", function() {
+                var division = $("#division").val();
+                if (division != "") {
+                    loadData("districtData", division);
+                } else {
+                    $("#district").html("");
                 }
-            });
-        }
-        loadData();
+            })
 
-        $("#division").on("change", function() {
-            var division = $("#division").val();
-            if (division != "") {
-                loadData("districtData", division);
-            } else {
-                $("#district").html("");
-            }
+            $("#district").on("change", function() {
+                var district = $("#district").val();
+                if (district != "") {
+                    loadData("upazilaData", district);
+                } else {
+                    $("#upazila").html("");
+                }
+            })
         })
-
-        $("#district").on("change", function() {
-            var district = $("#district").val();
-            if (district != "") {
-                loadData("upazilaData", district);
-            } else {
-                $("#upazila").html("");
-            }
-        })
-    })
     </script>
 </body>
 
