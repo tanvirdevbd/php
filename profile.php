@@ -1,9 +1,5 @@
 <?php
-$db_username = 'root';
-$db_password = '';
-$conn = new PDO('mysql:host=localhost;dbname=studentforms', $db_username, $db_password);
-$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
+include 'connect.php';
 session_start();
 if (!isset($_SESSION['email'])) {
     header("Location: login.php");
@@ -13,16 +9,14 @@ if (!isset($_SESSION['email'])) {
 echo "<b>Welcome </b>" .  $_SESSION['email'];
 
 $sql = "SELECT * FROM registration WHERE email='{$_SESSION['email']}'";
-$stmt = $conn->prepare($sql);
+$stmt = $pdo->prepare($sql);
 $stmt->execute();
 $result = $stmt->fetch(PDO::FETCH_ASSOC);
-
 ?>
 
 <a href="logout.php">
     <button class="btn btn-primary">Logout </button>
 </a>
-
 
 <!DOCTYPE html>
 <html lang="en">

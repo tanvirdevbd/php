@@ -1,6 +1,7 @@
 <?php
 $success = 0;
 $error = 0;
+$errorMessage = "";
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     include 'connect.php';
 
@@ -12,50 +13,42 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $firstname = $_POST['firstname'];
     $middlename = $_POST['middlename'];
     $lastname = $_POST['lastname'];
-    $phone = $_POST['phone'];
-    $pattern = "/^(?:\+?88)?01[3-9$]\d{8}/";
-    if (!preg_match($pattern, $phone)) {
-        $error = "Not valid BD phone number";
-        header("Location: registration.php");
-        exit();
-    }
 
     $email = $_POST['email'];
-    $db_username = 'root';
-    $db_password = '';
-    $conn = new PDO('mysql:host=localhost;dbname=studentforms', $db_username, $db_password);
-    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
     $sql = "SELECT * FROM `registration` WHERE email='$email' ";
-    $stmt = $conn->prepare($sql);
+    $stmt = $pdo->prepare($sql);
     $stmt->execute();
     $resEmail = $stmt->fetch(PDO::FETCH_ASSOC);
-    if ($resEmail) {
-        $error = "Email already exists give a new email for complete registration";
-        header("Location: registration.php");
-        exit();
-    }
+    if (!$resEmail) {
+        $password = $_POST['password'];
+        $retypepassword = $_POST['retypepassword'];
+        $class = $_POST['class'];
+        $gender = $_POST['gender'];
+        $division = $_POST['division'];
+        $district = $_POST['district'];
+        $upazila = $_POST['upazila'];
+        $address = $_POST['address'];
+        $std_img = $folder;
 
-    $password = $_POST['password'];
-    $retypepassword = $_POST['retypepassword'];
-    $class = $_POST['class'];
-    $gender = $_POST['gender'];
-    $division = $_POST['division'];
-    $district = $_POST['district'];
-    $upazila = $_POST['upazila'];
-    $address = $_POST['address'];
-    $std_img = $folder;
+        $phone = $_POST['phone'];
+        $pattern = "/^(?:\+?88)?01[3-9$]\d{8}/";
+        if (!preg_match($pattern, $phone)) {
+            $errorMessage = "Phone number is not valid BD number";
+        } else {
+            $sql = "INSERT INTO `registration`(std_img, firstname, middlename, lastname, phone, email, password, retypepassword, class, gender, division, district, upazila, address) VALUES(:std_img, :firstname, :middlename, :lastname, :phone, :email, :password, :retypepassword, :class, :gender, :division, :district, :upazila,  :address)";
 
-    $sql = "INSERT INTO `registration`(std_img, firstname, middlename, lastname, phone, email, password, retypepassword, class, gender, division, district, upazila, address) VALUES(:std_img, :firstname, :middlename, :lastname, :phone, :email, :password, :retypepassword, :class, :gender, :division, :district, :upazila,  :address)";
+            $stmt = $pdo->prepare($sql);
 
-    $stmt = $pdo->prepare($sql);
+            $result = $stmt->execute(['std_img' => $std_img, 'firstname' => $firstname, 'middlename' => $middlename, 'lastname' => $lastname, 'phone' => $phone,  'email' => $email,  'password' => $password,  'retypepassword' => $retypepassword, 'class' => $class, 'gender' => $gender, 'division' => $division, 'district' => $district, 'upazila' => $upazila, 'address' => $address]);
 
-    $result = $stmt->execute(['std_img' => $std_img, 'firstname' => $firstname, 'middlename' => $middlename, 'lastname' => $lastname, 'phone' => $phone,  'email' => $email,  'password' => $password,  'retypepassword' => $retypepassword, 'class' => $class, 'gender' => $gender, 'division' => $division, 'district' => $district, 'upazila' => $upazila, 'address' => $address]);
-
-    if ($result) {
-        $success = 1;
+            if ($result) {
+                $success = "Registration Successful";
+            } else {
+                $errorMessage = "Registration Failed";
+            }
+        }
     } else {
-        $error = 1;
+        $errorMessage = "Email already exists give a new email for complete registration";
     }
 }
 ?>
@@ -75,13 +68,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     <?php
     if ($success) {
-        echo '<div class="alert alert-success" role="alert">
-            Registration successful
-            </div>';
-    } else if ($error) {
-        echo '<div class="alert alert-danger" role="alert">
-            Registration failed
-            </div>';
+        echo "<div class='alert alert-success' role='alert'>" . $success . "</div>";
+        echo "<meta http-equiv='refresh' content='1;url=login.php'>";
+    } else if ($errorMessage) {
+        echo '<div class="alert alert-danger" role="alert">' . $errorMessage . '</div>';
     }
     ?>
 

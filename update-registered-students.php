@@ -1,21 +1,14 @@
 <?php
-$db_username = 'root';
-$db_password = '';
-
-$conn = new PDO('mysql:host=localhost;dbname=studentforms', $db_username, $db_password);
-$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-$sql = "SELECT * FROM registration WHERE id='{$_GET['id']}'";
-
-$stmt = $conn->prepare($sql);
-$stmt->execute();
-$result = $stmt->fetch(PDO::FETCH_ASSOC);
-// echo "<pre>";
-// print_r($result);
-// echo "</pre>";
-// die;
+include 'connect.php';
 
 $success = 0;
 $error = 0;
+$errorMessage = "";
+
+$sql = "SELECT * FROM registration WHERE id='{$_GET['id']}'";
+$stmt = $pdo->prepare($sql);
+$stmt->execute();
+$result = $stmt->fetch(PDO::FETCH_ASSOC);
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     include 'connect.php';
@@ -34,49 +27,48 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $phone = $_POST['phone'];
     $pattern = "/^(?:\+?88)?01[3-9$]\d{8}/";
     if (!preg_match($pattern, $phone)) {
-        $error = "Not valid BD phone number";
-        header("Location: dashboard.php");
-        exit();
-    }
-    $email = $_POST['email'];
-    $password = $_POST['password'];
-    $retypepassword = $_POST['retypepassword'];
-    $class = $_POST['class'];
-    $gender = $_POST['gender'];
-    $division = $_POST['division'];
-    $district = $_POST['district'];
-    $upazila = $_POST['upazila'];
-    $address = $_POST['address'];
-    if ($address == $result['address']) {
-        $address == $result['address'];
-    }
-    $std_img = $folder;
-
-    $sql = "UPDATE `registration`
-                SET firstname=:firstname,
-                    middlename=:middlename,
-                    lastname=:lastname,
-                    phone=:phone,
-                    email=:email,
-                    password=:password,
-                    retypepassword=:retypepassword,
-                    class=:class,
-                    gender=:gender,
-                    division=:division,
-                    district=:district,
-                    upazila=:upazila,
-                    address=:address,
-                    std_img=:std_img
-     WHERE id={$result['id']}";
-
-    $stmt = $conn->prepare($sql);
-
-    $res = $stmt->execute(['firstname' => $firstname, 'middlename' => $middlename, 'lastname' => $lastname, 'phone' => $phone,  'email' => $email,  'password' => $password, 'retypepassword' => $retypepassword,  'class' => $class, 'gender' => $gender, 'division' => $division, 'district' => $district, 'upazila' => $upazila, 'address' => $address, 'std_img' => $std_img]);
-
-    if ($res) {
-        $success = 1;
+        $errorMessage = "Phone number is not valid BD number";
     } else {
-        $error = 1;
+        $email = $_POST['email'];
+        $password = $_POST['password'];
+        $retypepassword = $_POST['retypepassword'];
+        $class = $_POST['class'];
+        $gender = $_POST['gender'];
+        $division = $_POST['division'];
+        $district = $_POST['district'];
+        $upazila = $_POST['upazila'];
+        $address = $_POST['address'];
+        if ($address == $result['address']) {
+            $address == $result['address'];
+        }
+        $std_img = $folder;
+
+        $sql = "UPDATE `registration`
+                    SET firstname=:firstname,
+                        middlename=:middlename,
+                        lastname=:lastname,
+                        phone=:phone,
+                        email=:email,
+                        password=:password,
+                        retypepassword=:retypepassword,
+                        class=:class,
+                        gender=:gender,
+                        division=:division,
+                        district=:district,
+                        upazila=:upazila,
+                        address=:address,
+                        std_img=:std_img
+         WHERE id={$result['id']}";
+
+        $stmt = $pdo->prepare($sql);
+
+        $res = $stmt->execute(['firstname' => $firstname, 'middlename' => $middlename, 'lastname' => $lastname, 'phone' => $phone,  'email' => $email,  'password' => $password, 'retypepassword' => $retypepassword,  'class' => $class, 'gender' => $gender, 'division' => $division, 'district' => $district, 'upazila' => $upazila, 'address' => $address, 'std_img' => $std_img]);
+
+        if ($res) {
+            $success = "Updated Successfully";
+        } else {
+            $errorMessage = "Update Failed";
+        }
     }
 }
 ?>
@@ -96,14 +88,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     <?php
     if ($success) {
-        echo '<div class="alert alert-success" role="alert">
-            Updated successfully
-            </div>';
-        echo "<meta http-equiv='refresh' content='0;url=dashboard.php'>";
-    } else if ($error) {
-        echo '<div class="alert alert-danger" role="alert">
-            Update failed
-            </div>';
+        echo "<div class='alert alert-success' role='alert'>" . $success . "</div>";
+        echo "<meta http-equiv='refresh' content='1;url=dashboard.php'>";
+    } else if ($errorMessage) {
+        echo '<div class="alert alert-danger" role="alert">' . $errorMessage . '</div>';
     }
     ?>
 
@@ -168,7 +156,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         <select name="class" id="class" class="select-area">
                             <?php
                             $sql = "SELECT * FROM class_tb";
-                            $stmt = $conn->prepare($sql);
+                            $stmt = $pdo->prepare($sql);
                             $stmt->execute();
                             while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                             ?>
@@ -187,7 +175,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             <option value="">Select Division</option>
                             <?php
                             $sql = "SELECT * FROM division_tb";
-                            $stmt = $conn->prepare($sql);
+                            $stmt = $pdo->prepare($sql);
                             $stmt->execute();
                             while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                             ?>
@@ -206,7 +194,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             <?php
                             if ($result['division']) {
                                 $sql = "SELECT * FROM district_tb WHERE division_id={$result['division']}";
-                                $stmt = $conn->prepare($sql);
+                                $stmt = $pdo->prepare($sql);
                                 $stmt->execute();
                                 while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                             ?>
@@ -227,7 +215,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             <?php
                             if ($result['district']) {
                                 $sql = "SELECT * FROM upazila_tb  WHERE district_id={$result['district']}";
-                                $stmt = $conn->prepare($sql);
+                                $stmt = $pdo->prepare($sql);
 
                                 $stmt->execute();
                                 while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {

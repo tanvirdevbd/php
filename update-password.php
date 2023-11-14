@@ -1,9 +1,5 @@
 <?php
-$db_username = 'root';
-$db_password = '';
-$conn = new PDO('mysql:host=localhost;dbname=studentforms', $db_username, $db_password);
-$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
+include 'connect.php';
 session_start();
 if (!isset($_SESSION['email'])) {
     header("Location: login.php");
@@ -13,7 +9,7 @@ if (!isset($_SESSION['email'])) {
 echo "<b>Welcome </b>" .  $_SESSION['email'];
 
 $sql = "SELECT * FROM registration WHERE email='{$_SESSION['email']}'";
-$stmt = $conn->prepare($sql);
+$stmt = $pdo->prepare($sql);
 $stmt->execute();
 $result = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -27,7 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if ($oldPassword == $result['password']) {
         if (strlen($newPassword) < 8) {
-            $error = "New Password length not greater than 6";
+            $error = "New Password length less than 8";
         } else if (!preg_match('@[A-Z]@', $newPassword)) {
             $error = "Uppercase not included";
         } else if (!preg_match('@[a-z]@', $newPassword)) {
@@ -40,7 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $sql = "UPDATE `registration`
                         SET password=:password
                         WHERE email='{$_SESSION['email']}'";
-            $stmt = $conn->prepare($sql);
+            $stmt = $pdo->prepare($sql);
             $res = $stmt->execute(['password' => $newPassword]);
             if ($res) {
                 $success = "New Password updated successfully";

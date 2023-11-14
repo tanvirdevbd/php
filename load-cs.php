@@ -1,14 +1,10 @@
 <?php
-$db_username = 'root';
-$db_password = '';
-
-$conn = new PDO('mysql:host=localhost;dbname=studentforms', $db_username, $db_password);
-$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+include 'connect.php';
 
 if ($_POST['type'] == "classData") {
     $sql = "SELECT * FROM class_tb";
 
-    $stmt = $conn->prepare($sql);
+    $stmt = $pdo->prepare($sql);
 
     $stmt->execute();
 
@@ -19,7 +15,7 @@ if ($_POST['type'] == "classData") {
 } else if ($_POST['type'] == "") {
     $sql = "SELECT * FROM division_tb";
 
-    $stmt = $conn->prepare($sql);
+    $stmt = $pdo->prepare($sql);
 
     $stmt->execute();
 
@@ -30,7 +26,7 @@ if ($_POST['type'] == "classData") {
 } else if ($_POST['type'] == "districtData") {
     $sql = "SELECT * FROM district_tb WHERE division_id = {$_POST['id']}";
 
-    $stmt = $conn->prepare($sql);
+    $stmt = $pdo->prepare($sql);
 
     $stmt->execute();
 
@@ -41,7 +37,7 @@ if ($_POST['type'] == "classData") {
 } else if ($_POST['type'] == "upazilaData") {
     $sql = "SELECT * FROM upazila_tb WHERE district_id = {$_POST['id']}";
 
-    $stmt = $conn->prepare($sql);
+    $stmt = $pdo->prepare($sql);
     $stmt->execute();
 
     $str = "";

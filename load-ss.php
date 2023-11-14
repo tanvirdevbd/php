@@ -1,13 +1,8 @@
 <?php
-$db_username = 'root';
-$db_password = '';
-
-$conn = new PDO('mysql:host=localhost;dbname=studentforms', $db_username, $db_password);
-$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
+include 'connect.php';
 $sql = "SELECT * FROM registration";
 
-$stmt = $conn->prepare($sql);
+$stmt = $pdo->prepare($sql);
 
 $stmt->execute();
 $str = "";
