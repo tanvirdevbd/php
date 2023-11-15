@@ -1,22 +1,11 @@
 <?php
-include 'connect.php';
 session_start();
-if (!isset($_SESSION['email'])) {
-    header("Location: login.php");
-    die();
-}
-
-echo "<b>Welcome </b>" .  $_SESSION['email'];
-
+include 'connect.php';
 $sql = "SELECT * FROM registration WHERE email='{$_SESSION['email']}'";
 $stmt = $pdo->prepare($sql);
 $stmt->execute();
 $result = $stmt->fetch(PDO::FETCH_ASSOC);
 ?>
-
-<a href="logout.php">
-    <button class="btn btn-primary">Logout </button>
-</a>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -30,6 +19,9 @@ $result = $stmt->fetch(PDO::FETCH_ASSOC);
 </head>
 
 <body>
+    <?php
+    include 'menu.php';
+    ?>
     <h3 class="title">Your Account Info.</h3>
 
     <div class='form-section mb-3'>

@@ -1,6 +1,11 @@
 <?php
 include 'connect.php';
 session_start();
+
+$success = 0;
+$error = 0;
+$errorMessage = "";
+
 if (!isset($_SESSION['email'])) {
     header("Location: login.php");
     die();
@@ -13,9 +18,6 @@ $stmt = $pdo->prepare($sql);
 $stmt->execute();
 $result = $stmt->fetch(PDO::FETCH_ASSOC);
 
-$success = 0;
-$error = 0;
-
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $oldPassword = $_POST['oldPassword'];
     $newPassword = $_POST['newPassword'];
@@ -23,15 +25,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if ($oldPassword == $result['password']) {
         if (strlen($newPassword) < 8) {
-            $error = "New Password length less than 8";
+            $errorMessage = "New Password length less than 8";
         } else if (!preg_match('@[A-Z]@', $newPassword)) {
-            $error = "Uppercase not included";
+            $errorMessage = "Uppercase not included in your password";
         } else if (!preg_match('@[a-z]@', $newPassword)) {
-            $error = "lowercase not included";
+            $errorMessage = "lowercase not included in your password";
         } else if (!preg_match('@[0-9]@', $newPassword)) {
-            $error = "number not included";
+            $errorMessage = "number not included in your password";
         } else if ($newPassword != $confirmNewPassword) {
-            $error = "New Password not matched";
+            $errorMessage = "New Password & Confirmed password not matched";
         } else {
             $sql = "UPDATE `registration`
                         SET password=:password
@@ -41,11 +43,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             if ($res) {
                 $success = "New Password updated successfully";
             } else {
-                $error = "New Password not updated";
+                $errorMessage = "New Password not updated";
             }
         }
     } else {
-        $error = "Old Password not matched";
+        $errorMessage = "Old Password is incorrect";
     }
 }
 
@@ -75,9 +77,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             '</div>';
         echo "<meta http-equiv='refresh' content='0;url=dashboard.php'>";;
         die;
-    } else if ($error) {
+    } else if ($errorMessage) {
         echo "<div class='alert alert-danger' role='alert'>"
-            . $error .
+            . $errorMessage .
             "</div>";
     }
     ?>

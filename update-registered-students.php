@@ -42,6 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $address == $result['address'];
         }
         $std_img = $folder;
+        $user_type = $_POST['user_type'];
 
         $sql = "UPDATE `registration`
                     SET firstname=:firstname,
@@ -57,12 +58,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         district=:district,
                         upazila=:upazila,
                         address=:address,
-                        std_img=:std_img
+                        std_img=:std_img,
+                        user_type=:user_type
          WHERE id={$result['id']}";
 
         $stmt = $pdo->prepare($sql);
 
-        $res = $stmt->execute(['firstname' => $firstname, 'middlename' => $middlename, 'lastname' => $lastname, 'phone' => $phone,  'email' => $email,  'password' => $password, 'retypepassword' => $retypepassword,  'class' => $class, 'gender' => $gender, 'division' => $division, 'district' => $district, 'upazila' => $upazila, 'address' => $address, 'std_img' => $std_img]);
+        $res = $stmt->execute(['firstname' => $firstname, 'middlename' => $middlename, 'lastname' => $lastname, 'phone' => $phone,  'email' => $email,  'password' => $password, 'retypepassword' => $retypepassword,  'class' => $class, 'gender' => $gender, 'division' => $division, 'district' => $district, 'upazila' => $upazila, 'address' => $address, 'std_img' => $std_img, 'user_type' => $user_type]);
 
         if ($res) {
             $success = "Updated Successfully";
@@ -146,6 +148,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         <label for="html" class='mx-1'>Female</label>
                         <input type="radio" id="others" name="gender" value="OTHERS" <?php echo ($result['gender'] == 'OTHERS') ? 'checked' : '' ?>>
                         <label for="html" class='mx-1'>Others</label>
+                    </div>
+                    <!-- user  -->
+                    <div class="mb-2">
+                        <label for="user_type" class="form-label me-4 name">User: </label>
+                        <select name="user_type" id="user_type" class="select-area">
+                            <option value="0" <?php echo ($result['user_type'] == 0) ? "selected" : ""; ?>>Admin</option>
+                            <option value="1" <?php echo ($result['user_type'] == 1) ? "selected" : ""; ?>>Student</option>
+                        </select>
                     </div>
                 </div>
 
