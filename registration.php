@@ -1,10 +1,11 @@
 <?php
+include 'connect.php';
+
 $success = 0;
 $error = 0;
 $errorMessage = "";
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    include 'connect.php';
 
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $filename = $_FILES["uploadfile"]["name"];
     $tempname = $_FILES["uploadfile"]["tmp_name"];
     $folder = "images/" . $filename;
@@ -13,12 +14,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $firstname = $_POST['firstname'];
     $middlename = $_POST['middlename'];
     $lastname = $_POST['lastname'];
-
     $email = $_POST['email'];
+
     $sql = "SELECT * FROM `registration` WHERE email='$email' ";
+
     $stmt = $pdo->prepare($sql);
+
     $stmt->execute();
+
     $resEmail = $stmt->fetch(PDO::FETCH_ASSOC);
+
     if (!$resEmail) {
         $password = $_POST['password'];
         $retypepassword = $_POST['retypepassword'];
@@ -114,6 +119,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         <input type="text" class="form-control" id="phone" name="phone" placeholder="Enter Phone Number" required>
                     </div>
 
+                    <!-- image  -->
+                    <div class="mb-4 me-2">
+                        <label for="image" class="form-label name">Profile Picture: </label>
+                        <input type="file" name="uploadfile" id="" class="ms-0">
+                    </div>
+                </div>
+                <div class='right'>
                     <!-- gender  -->
                     <div class="mb-2">
                         <label for="gender" class="form-label me-3 name">Gender: </label>
@@ -124,10 +136,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         <input type="radio" id="others" name="gender" value="OTHERS" required>
                         <label for="html" class='mx-1'>Others</label>
                     </div>
-
-                </div>
-                <div class='right'>
-
                     <!-- class  -->
                     <div class="mb-2">
                         <label for="class" class="form-label me-4 name">Class: </label>
@@ -135,7 +143,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             <option value="">Select Class</option>
                         </select>
                     </div>
-
                     <!-- division  -->
                     <div class="mb-2">
                         <label for="division" class="form-label me-2 name">Division: </label>
@@ -160,11 +167,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     <!-- address  -->
                     <div class="mb-2">
                         <textarea class="form-control me-2" id="address" name="address" rows="4" cols="50" placeholder="Enter Address"></textarea>
-                    </div>
-                    <!-- image  -->
-                    <div class="mb-2 me-2">
-                        <label for="image" class="form-label name">Image: </label>
-                        <input type="file" name="uploadfile" id="">
                     </div>
                     <!-- register button  -->
                     <button type="submit" class="reg-btn w-100">Register</button>

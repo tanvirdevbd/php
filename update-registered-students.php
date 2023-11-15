@@ -1,9 +1,20 @@
 <?php
+session_start();
 include 'connect.php';
 
 $success = 0;
 $error = 0;
 $errorMessage = "";
+
+$sessionId = $_SESSION['id'];
+$sessionUser = $_SESSION['user_type'];
+
+if (
+    !isset($sessionId) || ($sessionId !== $_GET['id'] && $sessionUser != 1)
+) {
+    header("Location: dashboard.php");
+    die();
+}
 
 $sql = "SELECT * FROM registration WHERE id='{$_GET['id']}'";
 $stmt = $pdo->prepare($sql);
@@ -11,8 +22,6 @@ $stmt->execute();
 $result = $stmt->fetch(PDO::FETCH_ASSOC);
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    include 'connect.php';
-
     $filename = $_FILES["uploadfile"]["name"];
     $tempname = $_FILES["uploadfile"]["tmp_name"];
     $folder = "images/" . $filename;
@@ -35,36 +44,45 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $class = $_POST['class'];
         $gender = $_POST['gender'];
         $division = $_POST['division'];
-        $district = $_POST['district'];
-        $upazila = $_POST['upazila'];
+        $district = "";
+        $upazila = "";
+        if (isset($_POST['district']) && isset($_POST['upazila'])) {
+            $district = $_POST['district'];
+            $upazila = $_POST['upazila'];
+        } else {
+            $errorMessage =  "Please select your district & upazila";
+        }
         $address = $_POST['address'];
         if ($address == $result['address']) {
             $address == $result['address'];
         }
         $std_img = $folder;
-        $user_type = $_POST['user_type'];
+        $user_type = "";
+        if (isset($_POST['user_type'])) {
+            $user_type = $_POST['user_type'];
+        }
 
         $sql = "UPDATE `registration`
-                    SET firstname=:firstname,
-                        middlename=:middlename,
-                        lastname=:lastname,
-                        phone=:phone,
-                        email=:email,
-                        password=:password,
-                        retypepassword=:retypepassword,
-                        class=:class,
-                        gender=:gender,
-                        division=:division,
-                        district=:district,
-                        upazila=:upazila,
-                        address=:address,
-                        std_img=:std_img,
-                        user_type=:user_type
-         WHERE id={$result['id']}";
+                SET firstname=:firstname,
+                middlename=:middlename,
+                lastname=:lastname,
+                phone=:phone,
+                email=:email,
+                password=:password,
+                retypepassword=:retypepassword,
+                class=:class,
+                gender=:gender,
+                division=:division,
+                district=:district,
+                upazila=:upazila,
+                address=:address,
+                std_img=:std_img,
+                user_type=:user_type
+                WHERE id={$result['id']}";
 
         $stmt = $pdo->prepare($sql);
 
-        $res = $stmt->execute(['firstname' => $firstname, 'middlename' => $middlename, 'lastname' => $lastname, 'phone' => $phone,  'email' => $email,  'password' => $password, 'retypepassword' => $retypepassword,  'class' => $class, 'gender' => $gender, 'division' => $division, 'district' => $district, 'upazila' => $upazila, 'address' => $address, 'std_img' => $std_img, 'user_type' => $user_type]);
+        $res = $stmt->execute(['firstname' => $firstname, 'middlename' => $middlename, 'lastname' => $lastname, 'phone' => $phone, 'email' => $email, 'password' => $password, 'retypepassword' => $retypepassword, 'class' => $class, 'gender' => $gender, 'division' => $division, 'district' => $district, 'upazila' => $upazila, 'address' => $address, 'std_img' => $std_img, 'user_type' => $user_type]);
 
         if ($res) {
             $success = "Updated Successfully";
@@ -138,7 +156,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     <div class=" mb-2 me-2">
                         <input type="text" class="form-control" id="phone" name="phone" placeholder="Enter Phone Number" value="<?php echo $result['phone'] ?>">
                     </div>
+                    <!-- image  -->
+                    <div class="mb-2 me-2">
+                        <label for="image" class="form-label name">Profile Picture: </label>
+                        <input type="file" name="uploadfile" id="">
+                    </div>
+                </div>
 
+                <div class='right'>
                     <!-- gender  -->
                     <div class="mb-2">
                         <label for="gender" class="form-label me-3 name">Gender: </label>
@@ -150,16 +175,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         <label for="html" class='mx-1'>Others</label>
                     </div>
                     <!-- user  -->
-                    <div class="mb-2">
-                        <label for="user_type" class="form-label me-4 name">User: </label>
-                        <select name="user_type" id="user_type" class="select-area">
-                            <option value="0" <?php echo ($result['user_type'] == 0) ? "selected" : ""; ?>>Admin</option>
-                            <option value="1" <?php echo ($result['user_type'] == 1) ? "selected" : ""; ?>>Student</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class='right'>
+                    <?php
+                    if ($sessionUser) { ?>
+                        <div class="mb-2">
+                            <label for="user_type" class="form-label me-4 name">User: </label>
+                            <select name="user_type" id="user_type" class="select-area">
+                                <option value="1" <?php echo ($result['user_type'] == 1) ? "selected" : ""; ?>>Admin</option>
+                                <option value="0" <?php echo ($result['user_type'] == 0) ? "selected" : ""; ?>>Student</option>
+                            </select>
+                        </div>
+                    <?php
+                    }
+                    ?>
                     <!-- class  -->
                     <div class="mb-2">
                         <label for="class" class="form-label me-4 name">Class: </label>
@@ -243,11 +270,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     <!-- address  -->
                     <div class="mb-2">
                         <textarea class="form-control me-2" id="address" name="address" rows="4" cols="50" placeholder="Enter Address" placeholder="Enter Address"><?php echo $result['address'] ? $result['address'] : '' ?></textarea>
-                    </div>
-                    <!-- image  -->
-                    <div class="mb-2 me-2">
-                        <label for="image" class="form-label name">Image: </label>
-                        <input type="file" name="uploadfile" id="">
                     </div>
                     <!-- register button  -->
                     <button type="submit" class="reg-btn w-100">Update </button>

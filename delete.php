@@ -12,7 +12,5 @@ if ($data) {
     <meta http-equiv='refresh' content='0;url=dashboard.php'>";
 <?php
 } else {
-    echo "<script>
-alert('Record not deleted')
-</script>";
+    echo "<script>alert('Record not deleted')</script>";
 } ?>

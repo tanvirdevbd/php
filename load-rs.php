@@ -1,20 +1,16 @@
 <?php
 session_start();
 include 'connect.php';
-$sessionEmail = $_SESSION['email'];
-$sql = "SELECT * FROM registration WHERE email=:email";
 
-$stmt = $pdo->prepare($sql);
-
-$stmt->execute(['email' => $sessionEmail]);
-$res = $stmt->fetch(PDO::FETCH_ASSOC);
-
-if (!$res['user_type']) {
+$sessionUser = $_SESSION['user_type'];
+$sessionId = $_SESSION['id'];
+if ($sessionUser) {
     $sql = "SELECT * FROM registration";
 
     $stmt = $pdo->prepare($sql);
 
     $stmt->execute();
+
     $str = "";
     $rowNum = 0;
     while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
@@ -23,7 +19,7 @@ if (!$res['user_type']) {
     <tr>
         <th scope='row'>{$rowNum}</th>       
         <td>
-            <img src='{$row['std_img']}' alt='Profile image' width='100' height='100'>
+            <img src='{$row['std_img']}' alt='Profile image'  width='80' height='80' style='border-radius: 50%;'>
         </td>
         <td>{$row['firstname']}</td>
         <td>{$row['middlename']}</td>
@@ -52,12 +48,18 @@ if (!$res['user_type']) {
     }
     echo $str;
 } else {
+    $sql = "SELECT * FROM registration WHERE id=:id";
+
+    $stmt = $pdo->prepare($sql);
+
+    $stmt->execute(['id' => $sessionId]);
+    $res = $stmt->fetch(PDO::FETCH_ASSOC);
     $rowNum = 1;
     $str = "
     <tr>
         <th scope='row'>{$rowNum}</th>       
         <td>
-            <img src='{$res['std_img']}' alt='Profile image' width='100' height='100'>
+            <img src='{$res['std_img']}' alt='Profile image' width='80' height='80' style='border-radius: 50%;'>
         </td>
         <td>{$res['firstname']}</td>
         <td>{$res['middlename']}</td>
@@ -71,7 +73,6 @@ if (!$res['user_type']) {
         <td>{$res['address']}</td>
         <td>{$res['email']}</td>
         <td>{$res['password']}</td>
-        <td>{$res['user_type']}</td>
         <td>
             <a href='update-registered-students.php?id={$res['id']}'>
              <button class='btn btn-warning mb-2'>Update </button>

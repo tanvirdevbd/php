@@ -1,19 +1,12 @@
 <?php
-include 'connect.php';
 session_start();
+include 'connect.php';
 
 $success = 0;
 $error = 0;
 $errorMessage = "";
 
-if (!isset($_SESSION['email'])) {
-    header("Location: login.php");
-    die();
-}
-
-echo "<b>Welcome </b>" .  $_SESSION['email'];
-
-$sql = "SELECT * FROM registration WHERE email='{$_SESSION['email']}'";
+$sql = "SELECT * FROM registration WHERE id='{$_SESSION['id']}'";
 $stmt = $pdo->prepare($sql);
 $stmt->execute();
 $result = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -37,7 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         } else {
             $sql = "UPDATE `registration`
                         SET password=:password
-                        WHERE email='{$_SESSION['email']}'";
+                        WHERE id='{$_SESSION['id']}'";
             $stmt = $pdo->prepare($sql);
             $res = $stmt->execute(['password' => $newPassword]);
             if ($res) {
@@ -50,11 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $errorMessage = "Old Password is incorrect";
     }
 }
-
 ?>
-<a href="logout.php">
-    <button class="btn btn-primary">Logout </button>
-</a>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -71,6 +60,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <body>
 
     <?php
+    include "menu.php";
     if ($success) {
         echo '<div class="alert alert-success" role="alert">'
             . $success .
@@ -112,7 +102,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     </div>
                 </div>
                 <!-- update button  -->
-                <button type="submit" class="btn btn-primary w-100">Update Password </button>
+                <button type="submit" class="btn btn-primary w-100">Update </button>
         </div>
         </form>
     </div>

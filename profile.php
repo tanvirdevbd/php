@@ -1,7 +1,8 @@
 <?php
 session_start();
 include 'connect.php';
-$sql = "SELECT * FROM registration WHERE email='{$_SESSION['email']}'";
+
+$sql = "SELECT * FROM registration WHERE id='{$_SESSION['id']}'";
 $stmt = $pdo->prepare($sql);
 $stmt->execute();
 $result = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -34,9 +35,6 @@ $result = $stmt->fetch(PDO::FETCH_ASSOC);
         <h5> Email: <?php echo $result['email'] ?> </h5>
     </div>
     <div class='update-area'>
-        <a href='update-profile.php'>
-            <button class="btn btn-secondary mb-4">Update Profile</button>
-        </a> <br>
         <a href='update-password.php'>
             <button class="btn btn-primary">Update Password</button>
         </a>

@@ -10,14 +10,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $sql = "SELECT * FROM `registration` WHERE email = :email AND password = :password";
 
     $stmt = $pdo->prepare($sql);
-
     $stmt->execute(['email' => $email, 'password' => $password]);
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    $number_of_rows = $stmt->fetchColumn();
-
-    if ($number_of_rows) {
+    if ($result) {
         $success = 1;
-        $_SESSION["email"] = $email;
+        $_SESSION["user_type"] = $result['user_type'];
+        $_SESSION["id"] = $result['id'];
         header("Location: dashboard.php");
     } else {
         $error = 1;
