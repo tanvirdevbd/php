@@ -35,42 +35,46 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $extension = array("jpeg", "jpg", "png", "gif");
     $maxsize = 120 * 1024;
     $allImages = "";
-    foreach ($_FILES["files"]["tmp_name"] as $key => $tmp_name) {
-        $file_name = $_FILES["files"]["name"][$key];
-        $file_tmp = $_FILES["files"]["tmp_name"][$key];
-        $file_size = $_FILES["files"]["size"][$key];
-        $ext = pathinfo($file_name, PATHINFO_EXTENSION);
+    // TODO: Image not select fix & show by tag or dropify package using 
+    if ($result['gallery_images']) {
+    } else {
+        foreach ($_FILES["files"]["tmp_name"] as $key => $tmp_name) {
+            $file_name = $_FILES["files"]["name"][$key];
+            $file_tmp = $_FILES["files"]["tmp_name"][$key];
+            $file_size = $_FILES["files"]["size"][$key];
+            $ext = pathinfo($file_name, PATHINFO_EXTENSION);
 
-        if (in_array($ext, $extension)) {
-            if (count($_FILES["files"]["size"]) >= 4) {
-                if ($file_size < $maxsize) {
-                    if (!file_exists("photo_gallery/" . $file_name)) {
-                        move_uploaded_file($file_tmp, "photo_gallery/" . $file_name);
-                        if (strlen($allImages)) {
-                            $allImages = "$allImages," . $file_name;
+            if (in_array($ext, $extension)) {
+                if (count($_FILES["files"]["size"]) >= 4) {
+                    if ($file_size < $maxsize) {
+                        if (!file_exists("photo_gallery/" . $file_name)) {
+                            move_uploaded_file($file_tmp, "photo_gallery/" . $file_name);
+                            if (strlen($allImages)) {
+                                $allImages = "$allImages," . $file_name;
+                            } else {
+                                $allImages = $file_name;
+                            }
                         } else {
-                            $allImages = $file_name;
+                            $filename = basename($file_name, $ext);
+                            $newFileName = $filename . time() . "." . $ext;
+                            move_uploaded_file($file_tmp, "photo_gallery/" . $newFileName);
+                            if (strlen($allImages)) {
+                                $allImages = "$allImages," . $newFileName;
+                            } else {
+                                $allImages = $newFileName;
+                            }
                         }
                     } else {
-                        $filename = basename($file_name, $ext);
-                        $newFileName = $filename . time() . "." . $ext;
-                        move_uploaded_file($file_tmp, "photo_gallery/" . $newFileName);
-                        if (strlen($allImages)) {
-                            $allImages = "$allImages," . $newFileName;
-                        } else {
-                            $allImages = $newFileName;
-                        }
+                        $errorValue = 1;
+                        $errorMessage =  "File size is larger than 120KB. Uplaod size limit 120KB";
                     }
                 } else {
                     $errorValue = 1;
-                    $errorMessage =  "File size is larger than 120KB. Uplaod size limit 120KB";
+                    $errorMessage = "Less than 4 images selected";
                 }
             } else {
-                $errorValue = 1;
-                $errorMessage = "Less than 4 images selected";
+                array_push($error, "$file_name, ");
             }
-        } else {
-            array_push($error, "$file_name, ");
         }
     }
     $gallery_images = $allImages;
