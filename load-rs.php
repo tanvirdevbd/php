@@ -8,19 +8,12 @@ $gallery_imagesArr = [];
 
 if ($sessionUser) {
     $sql = "SELECT * FROM registration";
-
     $stmt = $pdo->prepare($sql);
-
     $stmt->execute();
-
     $str = "";
     $rowNum = 0;
-
-
     while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-
         $gallery_imagesArr = explode(',', $row['gallery_images']);
-
         $rowNum++;
         $trSingle = "
     <tr>
@@ -64,9 +57,7 @@ if ($sessionUser) {
     echo $str;
 } else {
     $sql = "SELECT * FROM registration WHERE id=:id";
-
     $stmt = $pdo->prepare($sql);
-
     $stmt->execute(['id' => $sessionId]);
     $res = $stmt->fetch(PDO::FETCH_ASSOC);
     $rowNum = 1;
@@ -78,6 +69,7 @@ if ($sessionUser) {
         </td>
         <td class='d-flex'>";
 
+    $gallery_imagesArr = explode(',', $res['gallery_images']);
     if (count($gallery_imagesArr)) {
         foreach ($gallery_imagesArr as $x => $singleImage) {
             $str .= "<img src='photo_gallery/{$singleImage}' alt='gallery_images'  width='40' height='40' style='border-radius: 50%;'>";
