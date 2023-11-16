@@ -35,6 +35,9 @@ $result = $stmt->fetch(PDO::FETCH_ASSOC);
         <h5> Email: <?php echo $result['email'] ?> </h5>
     </div>
     <div class='update-area'>
+        <a href='update-profile-image.php'>
+            <button class="btn btn-primary">Update Profile Image</button>
+        </a>
         <a href='update-password.php'>
             <button class="btn btn-primary">Update Password</button>
         </a>

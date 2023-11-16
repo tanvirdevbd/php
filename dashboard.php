@@ -22,6 +22,7 @@ include 'connect.php';
                 <tr>
                     <th scope="col">#</th>
                     <th scope="col">Image</th>
+                    <th scope="col">Gallery images</th>
                     <th scope="col">First name</th>
                     <th scope="col">Middle name</th>
                     <th scope="col">Last Name</th>

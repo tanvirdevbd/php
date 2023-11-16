@@ -4,6 +4,8 @@ include 'connect.php';
 
 $sessionUser = $_SESSION['user_type'];
 $sessionId = $_SESSION['id'];
+$gallery_imagesArr = [];
+
 if ($sessionUser) {
     $sql = "SELECT * FROM registration";
 
@@ -13,13 +15,26 @@ if ($sessionUser) {
 
     $str = "";
     $rowNum = 0;
+
+
     while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+
+        $gallery_imagesArr = explode(',', $row['gallery_images']);
+
         $rowNum++;
         $trSingle = "
     <tr>
         <th scope='row'>{$rowNum}</th>       
         <td>
             <img src='{$row['std_img']}' alt='Profile image'  width='80' height='80' style='border-radius: 50%;'>
+        </td>
+        <td class='d-flex'>";
+        if (count($gallery_imagesArr)) {
+            foreach ($gallery_imagesArr as $x => $singleImage) {
+                $trSingle .= "<img src='photo_gallery/{$singleImage}' alt='gallery_images'  width='40' height='40' style='border-radius: 50%;'>";
+            }
+        }
+        $trSingle .= "
         </td>
         <td>{$row['firstname']}</td>
         <td>{$row['middlename']}</td>
@@ -60,6 +75,15 @@ if ($sessionUser) {
         <th scope='row'>{$rowNum}</th>       
         <td>
             <img src='{$res['std_img']}' alt='Profile image' width='80' height='80' style='border-radius: 50%;'>
+        </td>
+        <td class='d-flex'>";
+
+    if (count($gallery_imagesArr)) {
+        foreach ($gallery_imagesArr as $x => $singleImage) {
+            $str .= "<img src='photo_gallery/{$singleImage}' alt='gallery_images'  width='40' height='40' style='border-radius: 50%;'>";
+        }
+    }
+    $str .= "
         </td>
         <td>{$res['firstname']}</td>
         <td>{$res['middlename']}</td>

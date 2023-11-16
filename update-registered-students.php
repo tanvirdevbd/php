@@ -3,7 +3,7 @@ session_start();
 include 'connect.php';
 
 $success = 0;
-$error = 0;
+$errorValue = 0;
 $errorMessage = "";
 
 $sessionId = $_SESSION['id'];
@@ -29,6 +29,51 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $folder = $result['std_img'];
     }
     move_uploaded_file($tempname, $folder);
+    $std_img = $folder;
+
+    $error = array();
+    $extension = array("jpeg", "jpg", "png", "gif");
+    $maxsize = 120 * 1024;
+    $allImages = "";
+    foreach ($_FILES["files"]["tmp_name"] as $key => $tmp_name) {
+        $file_name = $_FILES["files"]["name"][$key];
+        $file_tmp = $_FILES["files"]["tmp_name"][$key];
+        $file_size = $_FILES["files"]["size"][$key];
+        $ext = pathinfo($file_name, PATHINFO_EXTENSION);
+
+        if (in_array($ext, $extension)) {
+            if (count($_FILES["files"]["size"]) >= 4) {
+                if ($file_size < $maxsize) {
+                    if (!file_exists("photo_gallery/" . $file_name)) {
+                        move_uploaded_file($file_tmp, "photo_gallery/" . $file_name);
+                        if (strlen($allImages)) {
+                            $allImages = "$allImages," . $file_name;
+                        } else {
+                            $allImages = $file_name;
+                        }
+                    } else {
+                        $filename = basename($file_name, $ext);
+                        $newFileName = $filename . time() . "." . $ext;
+                        move_uploaded_file($file_tmp, "photo_gallery/" . $newFileName);
+                        if (strlen($allImages)) {
+                            $allImages = "$allImages," . $newFileName;
+                        } else {
+                            $allImages = $newFileName;
+                        }
+                    }
+                } else {
+                    $errorValue = 1;
+                    $errorMessage =  "File size is larger than 120KB. Uplaod size limit 120KB";
+                }
+            } else {
+                $errorValue = 1;
+                $errorMessage = "Less than 4 images selected";
+            }
+        } else {
+            array_push($error, "$file_name, ");
+        }
+    }
+    $gallery_images = $allImages;
 
     $firstname = $_POST['firstname'];
     $middlename = $_POST['middlename'];
@@ -36,53 +81,66 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $phone = $_POST['phone'];
     $pattern = "/^(?:\+?88)?01[3-9$]\d{8}/";
     if (!preg_match($pattern, $phone)) {
+        $errorValue = 1;
         $errorMessage = "Phone number is not valid BD number";
-    } else {
-        $email = $_POST['email'];
-        $password = $_POST['password'];
-        $retypepassword = $_POST['retypepassword'];
-        $class = $_POST['class'];
-        $gender = $_POST['gender'];
-        $division = $_POST['division'];
-        $district = "";
-        $upazila = "";
-        if (isset($_POST['district']) && isset($_POST['upazila'])) {
-            $district = $_POST['district'];
-            $upazila = $_POST['upazila'];
-        } else {
-            $errorMessage =  "Please select your district & upazila";
-        }
-        $address = $_POST['address'];
-        if ($address == $result['address']) {
-            $address == $result['address'];
-        }
-        $std_img = $folder;
-        $user_type = "";
-        if (isset($_POST['user_type'])) {
-            $user_type = $_POST['user_type'];
-        }
+    }
 
+    $email = $_POST['email'];
+    $password = $_POST['password'];
+    $retypepassword = $_POST['retypepassword'];
+    $class = $_POST['class'];
+    $gender = $_POST['gender'];
+    $division = $_POST['division'];
+
+    $district = "";
+    $upazila = "";
+    if (isset($_POST['district']) && isset($_POST['upazila'])) {
+        $district = $_POST['district'];
+        $upazila = $_POST['upazila'];
+    } else {
+        $errorValue = 1;
+        $errorMessage =  "Please select your district & upazila";
+    }
+
+    $address = $_POST['address'];
+    if ($address == $result['address']) {
+        $address == $result['address'];
+    } else {
+        $errorValue = 1;
+        $errorMessage =  "Please enter your address";
+    }
+
+    $user_type = "";
+    if (isset($_POST['user_type'])) {
+        $user_type = $_POST['user_type'];
+    } else {
+        $errorValue = 1;
+        $errorMessage =  "Please select user type admin or student";
+    }
+
+    if (!$errorValue) {
         $sql = "UPDATE `registration`
-                SET firstname=:firstname,
-                middlename=:middlename,
-                lastname=:lastname,
-                phone=:phone,
-                email=:email,
-                password=:password,
-                retypepassword=:retypepassword,
-                class=:class,
-                gender=:gender,
-                division=:division,
-                district=:district,
-                upazila=:upazila,
-                address=:address,
-                std_img=:std_img,
-                user_type=:user_type
-                WHERE id={$result['id']}";
+                    SET firstname=:firstname,
+                    middlename=:middlename,
+                    lastname=:lastname,
+                    phone=:phone,
+                    email=:email,
+                    password=:password,
+                    retypepassword=:retypepassword,
+                    class=:class,
+                    gender=:gender,
+                    division=:division,
+                    district=:district,
+                    upazila=:upazila,
+                    address=:address,
+                    std_img=:std_img,
+                    user_type=:user_type,
+                    gallery_images=:gallery_images
+                    WHERE id={$result['id']}";
 
         $stmt = $pdo->prepare($sql);
 
-        $res = $stmt->execute(['firstname' => $firstname, 'middlename' => $middlename, 'lastname' => $lastname, 'phone' => $phone, 'email' => $email, 'password' => $password, 'retypepassword' => $retypepassword, 'class' => $class, 'gender' => $gender, 'division' => $division, 'district' => $district, 'upazila' => $upazila, 'address' => $address, 'std_img' => $std_img, 'user_type' => $user_type]);
+        $res = $stmt->execute(['firstname' => $firstname, 'middlename' => $middlename, 'lastname' => $lastname, 'phone' => $phone, 'email' => $email, 'password' => $password, 'retypepassword' => $retypepassword, 'class' => $class, 'gender' => $gender, 'division' => $division, 'district' => $district, 'upazila' => $upazila, 'address' => $address, 'std_img' => $std_img, 'user_type' => $user_type, 'gallery_images' => $gallery_images]);
 
         if ($res) {
             $success = "Updated Successfully";
@@ -110,7 +168,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($success) {
         echo "<div class='alert alert-success' role='alert'>" . $success . "</div>";
         echo "<meta http-equiv='refresh' content='1;url=dashboard.php'>";
-    } else if ($errorMessage) {
+    } else if ($errorValue) {
         echo '<div class="alert alert-danger" role="alert">' . $errorMessage . '</div>';
     }
     ?>
@@ -160,6 +218,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     <div class="mb-2 me-2">
                         <label for="image" class="form-label name">Profile Picture: </label>
                         <input type="file" name="uploadfile" id="">
+                    </div>
+                    <!-- gallery images  -->
+                    <div class="mb-2 me-2">
+                        <label for="gallery-images" class="form-label name">Gallery Images: </label>
+                        <input type="file" name="files[]" multiple>
                     </div>
                 </div>
 
