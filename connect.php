@@ -10,6 +10,7 @@ try {
 }
 
 // echo "<pre>";
-// print_r($result);
+// print_r($gallery_images);
 // echo "</pre>";
+// var_dump($gallery_images);
 // die;

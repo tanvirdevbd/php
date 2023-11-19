@@ -1,5 +1,9 @@
 <?php
 session_start();
+if (!$_SESSION["id"]) {
+    header("Location: login.php");
+}
+
 include 'connect.php';
 
 $success = 0;
@@ -74,10 +78,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
     }
 
-    if ($allImages != $result['gallery_images']) {
-        $gallery_images = $allImages;
-    } else {
+    if ($allImages == $result['gallery_images'] || $allImages == '') {
         $gallery_images = $result['gallery_images'];
+    } else {
+        $gallery_images = $allImages;
     }
 
     $firstname = $_POST['firstname'];
@@ -155,7 +159,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Update Students</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
-    <link rel="stylesheet" href="dashboard.css">
+    <link rel="stylesheet" href="update.css">
 </head>
 
 <body>
@@ -214,7 +218,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     <div class="mb-2 me-2">
                         <label for="image" class="form-label name">Profile Picture: </label>
                         <input type="file" name="uploadfile" id="">
-                        <img src="<?php echo $result['std_img'] ?>" alt="profile_image" width='40' height='40' style='border-radius: 50%;'>
+                        <img class="ms-0" src="<?php echo $result['std_img'] ?>" alt="profile_image" width='40' height='40' style='border-radius: 50%;'>
                     </div>
                     <!-- gallery images  -->
                     <div class="mb-2 me-2">

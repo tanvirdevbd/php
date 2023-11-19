@@ -1,5 +1,9 @@
 <?php
 session_start();
+if (!$_SESSION["id"]) {
+    header("Location: login.php");
+}
+
 include 'connect.php';
 ?>
 <!DOCTYPE html>
@@ -10,12 +14,19 @@ include 'connect.php';
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registered Students</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link rel="stylesheet" href="dashboard.css">
 </head>
 
 <body>
     <?php
     include 'menu.php';
     ?>
+    <div class="d-flex justify-content-end">
+        <form action='dashboard.php' method='POST' id="search-form">
+            <input type="text" placeholder="Name or phone by Search" class="my-2 p-2 search-dashboard" id="search-info" name="search-info">
+            <button type="submit" class='p-2 btn btn-primary'>Search</button>
+        </form>
+    </div>
     <div class="table-responsive">
         <table class="table">
             <thead class="thead-dark">
@@ -56,10 +67,14 @@ include 'connect.php';
     <script type="text/javascript" src="jquery.js"></script>
     <script type="text/javascript">
         $(document).ready(function() {
-            function loadData() {
+            function loadData(type = "", category_id) {
                 $.ajax({
                     url: 'load-rs.php',
                     type: 'POST',
+                    data: {
+                        type: type,
+                        id: category_id
+                    },
                     success: function(data) {
                         console.log(data)
                         $("#registered_students").html(data)
@@ -67,6 +82,16 @@ include 'connect.php';
                 });
             }
             loadData();
+
+            $("#search-form").on('submit', function(e) {
+                e.preventDefault();
+                var searchInfo = $("#search-info").val();
+                if (searchInfo != "") {
+                    loadData("search", searchInfo);
+                } else {
+                    loadData("", searchInfo);
+                }
+            })
         })
 
         function checkdelete() {

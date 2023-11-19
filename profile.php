@@ -1,5 +1,8 @@
 <?php
 session_start();
+if (!$_SESSION["id"]) {
+    header("Location: login.php");
+}
 include 'connect.php';
 
 $sql = "SELECT * FROM registration WHERE id='{$_SESSION['id']}'";
