@@ -1,8 +1,5 @@
 <?php
 session_start();
-if ($_SESSION["id"]) {
-    header("Location: dashboard.php");
-}
 
 $success = 0;
 $error = 0;

@@ -6,14 +6,11 @@ $sessionUser = $_SESSION['user_type'];
 $sessionId = $_SESSION['id'];
 $gallery_imagesArr = [];
 
-// var_dump($_POST['type']);
-// die();
-
 if ($sessionUser && $_POST['type'] == "search") {
     $searchedTerm = $_POST['id'];
-    $sql = "SELECT * FROM registration WHERE firstname =:firstname OR phone=:phone ";
+    $sql = "SELECT * FROM registration  WHERE firstname LIKE '%$searchedTerm%' OR phone LIKE '%$searchedTerm%'";
     $stmt = $pdo->prepare($sql);
-    $res11 = $stmt->execute(['firstname' => $searchedTerm, 'phone' => $searchedTerm]);
+    $res11 = $stmt->execute();
     $str = "";
     $rowNum = 0;
     while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
@@ -30,7 +27,7 @@ if ($sessionUser && $_POST['type'] == "search") {
             foreach ($gallery_imagesArr as $x => $singleImage) {
                 $trSingle .= "<img src='photo_gallery/{$singleImage}' alt='gallery_images'  width='40' height='40' style='border-radius: 50%;'>";
             }
-        }
+        };
         $trSingle .= "
             </td>
             <td>{$row['firstname']}</td>
@@ -39,9 +36,30 @@ if ($sessionUser && $_POST['type'] == "search") {
             <td>{$row['phone']}</td>
             <td>{$row['class']}</td>
             <td>{$row['gender']}</td>
-            <td>{$row['division']}</td>
-            <td>{$row['district']}</td>
-            <td>{$row['upazila']}</td>
+            <td>";
+        $sql1 = "SELECT name from division_tb where id=:id";
+        $stmt1 = $pdo->prepare($sql1);
+        $stmt1->execute(['id' => $row['division']]);
+        $divisionRes = $stmt1->fetch(PDO::FETCH_ASSOC);
+        $trSingle .=  $divisionRes['name'];
+        $trSingle .= "</td>
+    
+            <td>";
+        $sql2 = "SELECT name from district_tb where id=:id";
+        $stmt2 = $pdo->prepare($sql2);
+        $stmt2->execute(['id' => $row['district']]);
+        $districtRes = $stmt2->fetch(PDO::FETCH_ASSOC);
+        $trSingle .=  $districtRes['name'];
+        $trSingle .= "</td>
+    
+    
+            <td>";
+        $sql3 = "SELECT name from upazila_tb where id=:id";
+        $stmt3 = $pdo->prepare($sql3);
+        $stmt3->execute(['id' => $row['upazila']]);
+        $upazilaRes = $stmt3->fetch(PDO::FETCH_ASSOC);
+        $trSingle .=  $upazilaRes['name'];
+        $trSingle .= "</td>
             <td>{$row['address']}</td>
             <td>{$row['email']}</td>
             <td>{$row['password']}</td>
@@ -69,6 +87,7 @@ if ($sessionUser && $_POST['type'] == "search") {
     $sql = "SELECT * FROM registration";
     $stmt = $pdo->prepare($sql);
     $stmt->execute();
+
     $str = "";
     $rowNum = 0;
     while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
@@ -94,9 +113,32 @@ if ($sessionUser && $_POST['type'] == "search") {
         <td>{$row['phone']}</td>
         <td>{$row['class']}</td>
         <td>{$row['gender']}</td>
-        <td>{$row['division']}</td>
-        <td>{$row['district']}</td>
-        <td>{$row['upazila']}</td>
+
+        <td>";
+        $sql1 = "SELECT name from division_tb where id=:id";
+        $stmt1 = $pdo->prepare($sql1);
+        $stmt1->execute(['id' => $row['division']]);
+        $divisionRes = $stmt1->fetch(PDO::FETCH_ASSOC);
+        $trSingle .=  $divisionRes['name'];
+        $trSingle .= "</td>
+
+        <td>";
+        $sql2 = "SELECT name from district_tb where id=:id";
+        $stmt2 = $pdo->prepare($sql2);
+        $stmt2->execute(['id' => $row['district']]);
+        $districtRes = $stmt2->fetch(PDO::FETCH_ASSOC);
+        $trSingle .=  $districtRes['name'];
+        $trSingle .= "</td>
+
+
+        <td>";
+        $sql3 = "SELECT name from upazila_tb where id=:id";
+        $stmt3 = $pdo->prepare($sql3);
+        $stmt3->execute(['id' => $row['upazila']]);
+        $upazilaRes = $stmt3->fetch(PDO::FETCH_ASSOC);
+        $trSingle .=  $upazilaRes['name'];
+        $trSingle .= "</td>
+
         <td>{$row['address']}</td>
         <td>{$row['email']}</td>
         <td>{$row['password']}</td>
@@ -148,9 +190,30 @@ if ($sessionUser && $_POST['type'] == "search") {
         <td>{$res['phone']}</td>
         <td>{$res['class']}</td>
         <td>{$res['gender']}</td>
-        <td>{$res['division']}</td>
-        <td>{$res['district']}</td>
-        <td>{$res['upazila']}</td>
+        <td>";
+    $sql1 = "SELECT name from division_tb where id=:id";
+    $stmt1 = $pdo->prepare($sql1);
+    $stmt1->execute(['id' => $res['division']]);
+    $divisionRes = $stmt1->fetch(PDO::FETCH_ASSOC);
+    $str .=  $divisionRes['name'];
+    $str .= "</td>
+    
+            <td>";
+    $sql2 = "SELECT name from district_tb where id=:id";
+    $stmt2 = $pdo->prepare($sql2);
+    $stmt2->execute(['id' => $res['district']]);
+    $districtRes = $stmt2->fetch(PDO::FETCH_ASSOC);
+    $str .=  $districtRes['name'];
+    $str .= "</td>
+    
+    
+            <td>";
+    $sql3 = "SELECT name from upazila_tb where id=:id";
+    $stmt3 = $pdo->prepare($sql3);
+    $stmt3->execute(['id' => $res['upazila']]);
+    $upazilaRes = $stmt3->fetch(PDO::FETCH_ASSOC);
+    $str .=  $upazilaRes['name'];
+    $str .= "</td>
         <td>{$res['address']}</td>
         <td>{$res['email']}</td>
         <td>{$res['password']}</td>
