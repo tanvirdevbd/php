@@ -7,11 +7,14 @@ if (!$_SESSION["id"]) {
 include 'connect.php';
 
 $searchedTerm = "";
+$stmtSearch = (object)[];
 if ($_SERVER['REQUEST_METHOD'] == 'GET') {
-    $searchedTerm = $_GET['search-info'];
-    $sql = "SELECT * FROM registration  WHERE firstname LIKE '%$searchedTerm%' OR phone LIKE '%$searchedTerm%'";
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute();
+    if (isset($_GET['search-info'])) {
+        $searchedTerm = $_GET['search-info'];
+        $sql = "SELECT * FROM registration  WHERE firstname LIKE '%$searchedTerm%' OR phone LIKE '%$searchedTerm%'";
+        $stmtSearch = $pdo->prepare($sql);
+        $stmtSearch->execute();
+    }
 }
 ?>
 
@@ -60,101 +63,101 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
                     <th scope="col">Email</th>
                     <th scope="col">Password</th>
                     <?php
-                    // $sessionId = $_SESSION['id'];
-                    // $sql1 = "SELECT * FROM registration WHERE id=:id";
-                    // $stmt1 = $pdo->prepare($sql1);
-                    // $stmt1->execute(['id' => $sessionId]);
-                    // $userRes = $stmt1->fetch(PDO::FETCH_ASSOC);
-                    // if ($userRes['user_type'] == 1) {
-                    //     echo '<th scope="col">User Type</th>';
-                    // }
+                    $sessionId = $_SESSION['id'];
+                    $sql1 = "SELECT * FROM registration WHERE id=:id";
+                    $stmt1 = $pdo->prepare($sql1);
+                    $stmt1->execute(['id' => $sessionId]);
+                    $userRes = $stmt1->fetch(PDO::FETCH_ASSOC);
+                    if ($userRes['user_type'] == 1) {
+                        echo '<th scope="col">User Type</th>';
+                    }
                     ?>
                     <th scope="col">Action</th>
                 </tr>
             </thead>
             <tbody id='registered_students'>
                 <?php
-                echo "<pre>";
-                print_r($sql);
-                echo "</pre>";
-                die;
-                $gallery_imagesArr = [];
-                $rowNum = 0;
-                while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                    $gallery_imagesArr = explode(',', $row['gallery_images']);
-                ?>
-                    <tr>
-                        <th scope='row'>{$rowNum}</th>
-                        <td>
-                            <img src="<?php echo $row[' std_img'] ?>" alt='Profile image' width='80' height='80' style='border-radius: 50%;'>
-                        </td>
-                        <td class='d-flex'>
-                            <?php
-                            if (count($gallery_imagesArr)) {
-                                foreach ($gallery_imagesArr as $x => $singleImage) {
-                            ?>
-                                    <img src='photo_gallery/<?php echo $singleImage ?>' alt='gallery_images' width='40' height='40' style='border-radius: 50%;'>;
-                            <?php
-                                }
-                            }
-                            ?>
-                        </td>
-                        <td><?php echo $row['firstname'] ?></td>
-                        <td><?php echo $row['middlename'] ?></td>
-                        <td><?php echo $row['lastname'] ?></td>
-                        <td><?php echo $row['phone'] ?></td>
-                        <td><?php echo $row['class'] ?></td>
-                        <td><?php echo $row['gender'] ?></td>
-                        <td>
-                            <?php
-                            $sql1 = "SELECT name from division_tb where id=:id";
-                            $stmt1 = $pdo->prepare($sql1);
-                            $stmt1->execute(['id' => $row['division']]);
-                            $divisionRes = $stmt1->fetch(PDO::FETCH_ASSOC);
-                            echo $divisionRes['name'];
-                            ?>
-                        </td>
+                if (isset($_GET['search-info'])) {
+                    $gallery_imagesArr = [];
+                    $rowNum = 0;
+                    while ($row = $stmtSearch->fetch(PDO::FETCH_ASSOC)) {
+                        $rowNum++;
+                        $gallery_imagesArr = explode(',', $row['gallery_images']);
 
-                        <td>
-                            <?php
-                            $sql2 = "SELECT name from district_tb where id=:id";
-                            $stmt2 = $pdo->prepare($sql2);
-                            $stmt2->execute(['id' => $row['district']]);
-                            $districtRes = $stmt2->fetch(PDO::FETCH_ASSOC);
-                            echo $districtRes['name'];
-                            ?>
-                        </td>
-                        <td>
-                            <?php
-                            $sql3 = "SELECT name from upazila_tb where id=:id";
-                            $stmt3 = $pdo->prepare($sql3);
-                            $stmt3->execute(['id' => $row['upazila']]);
-                            $upazilaRes = $stmt3->fetch(PDO::FETCH_ASSOC);
-                            echo $upazilaRes['name'];
-                            ?>
-                        </td>
-                        <td><?php echo $row['address'] ?></td>
-                        <td><?php echo $row['email'] ?></td>
-                        <td><?php echo $row['password'] ?></td>
-                        <td>
-                            <?php
-                            if ($row['user_type'] == 1) {
-                                echo 'Admin';
-                            } else if ($row['user_type'] == 0) {
-                                echo  'Student';
-                            }
-                            ?>
-                        </td>
-                        <td>
-                            <a href='update-registered-students.php?id=<?php echo $row[' id'] ?>'>
-                                <button class='btn btn-warning mb-2'>Update </button>
-                            </a>
-                            <a href='delete.php?id= <?php echo $row[' id'] ?>'>
-                                <button class='btn btn-danger' onclick='return checkdelete()'>Delete </button>
-                            </a>
-                        </td>
-                    </tr>
+                ?>
+                        <tr>
+                            <th scope='row'><?php echo $rowNum ?></th>
+                            <td>
+                                <img src="<?php echo $row['std_img'] ?>" alt='Profile image' width='80' height='80' style='border-radius: 50%;'>
+                            </td>
+                            <td class='d-flex'>
+                                <?php
+                                if (count($gallery_imagesArr)) {
+                                    foreach ($gallery_imagesArr as $x => $singleImage) {
+                                ?>
+                                        <img src='photo_gallery/<?php echo $singleImage ?>' alt='gallery_images' width='40' height='40' style='border-radius: 50%;'>;
+                                <?php
+                                    }
+                                }
+                                ?>
+                            </td>
+                            <td><?php echo $row['firstname'] ?></td>
+                            <td><?php echo $row['middlename'] ?></td>
+                            <td><?php echo $row['lastname'] ?></td>
+                            <td><?php echo $row['phone'] ?></td>
+                            <td><?php echo $row['class'] ?></td>
+                            <td><?php echo $row['gender'] ?></td>
+                            <td>
+                                <?php
+                                $sql1 = "SELECT name from division_tb where id=:id";
+                                $stmt1 = $pdo->prepare($sql1);
+                                $stmt1->execute(['id' => $row['division']]);
+                                $divisionRes = $stmt1->fetch(PDO::FETCH_ASSOC);
+                                echo $divisionRes['name'];
+                                ?>
+                            </td>
+
+                            <td>
+                                <?php
+                                $sql2 = "SELECT name from district_tb where id=:id";
+                                $stmt2 = $pdo->prepare($sql2);
+                                $stmt2->execute(['id' => $row['district']]);
+                                $districtRes = $stmt2->fetch(PDO::FETCH_ASSOC);
+                                echo $districtRes['name'];
+                                ?>
+                            </td>
+                            <td>
+                                <?php
+                                $sql3 = "SELECT name from upazila_tb where id=:id";
+                                $stmt3 = $pdo->prepare($sql3);
+                                $stmt3->execute(['id' => $row['upazila']]);
+                                $upazilaRes = $stmt3->fetch(PDO::FETCH_ASSOC);
+                                echo $upazilaRes['name'];
+                                ?>
+                            </td>
+                            <td><?php echo $row['address'] ?></td>
+                            <td><?php echo $row['email'] ?></td>
+                            <td><?php echo $row['password'] ?></td>
+                            <td>
+                                <?php
+                                if ($row['user_type'] == 1) {
+                                    echo 'Admin';
+                                } else if ($row['user_type'] == 0) {
+                                    echo  'Student';
+                                }
+                                ?>
+                            </td>
+                            <td>
+                                <a href='update-registered-students.php?id=<?php echo $row['id'] ?>'>
+                                    <button class='btn btn-warning mb-2'>Update </button>
+                                </a>
+                                <a href='delete.php?id= <?php echo $row['id'] ?>'>
+                                    <button class='btn btn-danger' onclick='return checkdelete()'>Delete </button>
+                                </a>
+                            </td>
+                        </tr>
                 <?php
+                    }
                 }
                 ?>
             </tbody>
@@ -175,8 +178,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
                             id: category_id
                         },
                         success: function(data) {
-                            console.log(data)
                             $("#registered_students").html(data)
+
                         }
                     });
                 }
