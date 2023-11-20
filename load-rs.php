@@ -22,10 +22,10 @@ if ($sessionUser && $_POST['type'] == "search") {
             <td>
                 <img src='{$row['std_img']}' alt='Profile image'  width='80' height='80' style='border-radius: 50%;'>
             </td>
-            <td class='d-flex'>";
+            <td class='d-flex flex-wrap gallery-area'>";
         if (count($gallery_imagesArr)) {
             foreach ($gallery_imagesArr as $x => $singleImage) {
-                $trSingle .= "<img src='photo_gallery/{$singleImage}' alt='gallery_images'  width='40' height='40' style='border-radius: 50%;'>";
+                $trSingle .= "<img src='photo_gallery/{$singleImage}' alt='gallery_images'  width='40' height='40' class='single-image'>";
             }
         };
         $trSingle .= "
@@ -50,8 +50,7 @@ if ($sessionUser && $_POST['type'] == "search") {
         $stmt2->execute(['id' => $row['district']]);
         $districtRes = $stmt2->fetch(PDO::FETCH_ASSOC);
         $trSingle .=  $districtRes['name'];
-        $trSingle .= "</td>
-    
+        $trSingle .= "</td>    
     
             <td>";
         $sql3 = "SELECT name from upazila_tb where id=:id";
@@ -99,10 +98,10 @@ if ($sessionUser && $_POST['type'] == "search") {
         <td>
             <img src='{$row['std_img']}' alt='Profile image'  width='80' height='80' style='border-radius: 50%;'>
         </td>
-        <td class='d-flex'>";
+        <td class='d-flex flex-wrap gallery-area'>";
         if (count($gallery_imagesArr)) {
             foreach ($gallery_imagesArr as $x => $singleImage) {
-                $trSingle .= "<img src='photo_gallery/{$singleImage}' alt='gallery_images'  width='40' height='40' style='border-radius: 50%;'>";
+                $trSingle .= "<img src='photo_gallery/{$singleImage}' alt='gallery_images' width='40' height='40' class='single-image'>";
             }
         }
         $trSingle .= "
@@ -129,7 +128,6 @@ if ($sessionUser && $_POST['type'] == "search") {
         $districtRes = $stmt2->fetch(PDO::FETCH_ASSOC);
         $trSingle .=  $districtRes['name'];
         $trSingle .= "</td>
-
 
         <td>";
         $sql3 = "SELECT name from upazila_tb where id=:id";
@@ -174,12 +172,11 @@ if ($sessionUser && $_POST['type'] == "search") {
         <td>
             <img src='{$res['std_img']}' alt='Profile image' width='80' height='80' style='border-radius: 50%;'>
         </td>
-        <td class='d-flex'>";
-
+        <td class='d-flex flex-wrap gallery-area'>";
     $gallery_imagesArr = explode(',', $res['gallery_images']);
     if (count($gallery_imagesArr)) {
         foreach ($gallery_imagesArr as $x => $singleImage) {
-            $str .= "<img src='photo_gallery/{$singleImage}' alt='gallery_images'  width='40' height='40' style='border-radius: 50%;'>";
+            $str .= "<img src='photo_gallery/{$singleImage}' alt='gallery_images'  width='40' height='40' class='single-image'>";
         }
     }
     $str .= "
@@ -204,8 +201,7 @@ if ($sessionUser && $_POST['type'] == "search") {
     $stmt2->execute(['id' => $res['district']]);
     $districtRes = $stmt2->fetch(PDO::FETCH_ASSOC);
     $str .=  $districtRes['name'];
-    $str .= "</td>
-    
+    $str .= "</td>   
     
             <td>";
     $sql3 = "SELECT name from upazila_tb where id=:id";
@@ -229,3 +225,62 @@ if ($sessionUser && $_POST['type'] == "search") {
     ";
     echo $str;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+if ($_POST['type'] == "classData") {
+    $sql = "SELECT * FROM class_tb";
+
+    $stmt = $pdo->prepare($sql);
+
+    $stmt->execute();
+
+    $str = "";
+    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+        $str .= "<option value='{$row['id']}'>{$row['name']}</option>";
+    }
+} else if ($_POST['type'] == "divisionData") {
+    $sql = "SELECT * FROM division_tb";
+
+    $stmt = $pdo->prepare($sql);
+
+    $stmt->execute();
+
+    $str = "";
+    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+        $str .= "<option value='{$row['id']}'>{$row['name']}</option>";
+    }
+} else if ($_POST['type'] == "districtData") {
+    $sql = "SELECT * FROM district_tb WHERE division_id = {$_POST['id']}";
+
+    $stmt = $pdo->prepare($sql);
+
+    $stmt->execute();
+
+    $str = "";
+    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+        $str .= "<option value='{$row['id']}'>{$row['name']}</option>";
+    }
+} else if ($_POST['type'] == "upazilaData") {
+    $sql = "SELECT * FROM upazila_tb WHERE district_id = {$_POST['id']}";
+
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute();
+
+    $str = "";
+    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+        $str .= "<option value='{$row['id']}'>{$row['name']}</option>";
+    }
+}
+echo $str;

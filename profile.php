@@ -39,7 +39,7 @@ $result = $stmt->fetch(PDO::FETCH_ASSOC);
     </div>
     <div class='update-area'>
         <a href='update-profile-image.php'>
-            <button class="btn btn-primary">Update Profile Image</button>
+            <button class="btn btn-secondary">Update Profile Image</button>
         </a>
         <a href='update-password.php'>
             <button class="btn btn-primary">Update Password</button>
