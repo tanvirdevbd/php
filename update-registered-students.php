@@ -165,7 +165,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <body>
 
     <?php
-    if ($success) {
+    if ($success &&  isset($_GET['search'])) {
+        $searchTerm = $_GET['search'];
+        echo "<div class='alert alert-success' role='alert'>" . $success . "</div>";
+        echo "<meta http-equiv='refresh' content='1;url=dashboard.php?search=$searchTerm'>";
+    } else if ($success) {
         echo "<div class='alert alert-success' role='alert'>" . $success . "</div>";
         echo "<meta http-equiv='refresh' content='1;url=dashboard.php'>";
     } else if ($errorValue) {

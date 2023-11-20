@@ -79,7 +79,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     <div class='container'>
         <div class='title'>
-            <h1>Update Student Profile Image</h1>
+            <h1>Update Your Image</h1>
         </div>
         <div class='form-section'>
             <form method='POST' enctype="multipart/form-data">

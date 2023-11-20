@@ -64,7 +64,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <body>
 
     <?php
-    include "menu.php";
     if ($success) {
         echo '<div class="alert alert-success" role="alert">'
             . $success .
@@ -79,7 +78,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     ?>
     <div class='container'>
         <div class='title'>
-            <h1 class='mt-4'>Change Password</h1>
+            <h1 class='my-5'>Change Account Password</h1>
         </div>
         <div class='form-section'>
             <form method='post'>

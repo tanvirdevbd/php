@@ -71,7 +71,7 @@ if ($sessionUser && $_POST['type'] == "search") {
         }
         $trSingle .=  "</td>
             <td>
-                <a href='update-registered-students.php?id={$row['id']}'>
+                <a href='update-registered-students.php?id={$row['id']}&search={$searchedTerm}'>
                  <button class='btn btn-warning mb-2'>Update </button>
                 </a>
                  <a href='delete.php?id={$row['id']}'>
