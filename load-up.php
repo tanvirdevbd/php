@@ -21,7 +21,6 @@ if ($sessionUser  && $_POST['type'] == "edit") {
 
     $str = "
     <div class='form-section'>
-            <form method='POST' enctype='multipart/form-data'>
                 <div class='left'>
                     <!-- firstname  -->
                     <div class='mb-2 me-2'>
@@ -105,6 +104,9 @@ if ($sessionUser  && $_POST['type'] == "edit") {
                             <label for='html' class='mx-1'>Others</label>
                         </div>
 
+
+
+                        
                         <!-- user  -->";
     if ($sessionUser) {
         $str .=
@@ -154,22 +156,146 @@ if ($sessionUser  && $_POST['type'] == "edit") {
     $str .= "
         </select>
     </div> 
-
-
-
+    <!-- division  -->
+    <div class='mb-2'>
+        <label for='division' class='form-label me-2 name'>Division: </label>
+        <select name='division' id='division' class='select-area'>";
+    $sql = "SELECT * FROM division_tb";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute();
+    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+        $str .= "<option value='{$row['id']}'";
+        if ($result['division'] == $row['id']) {
+            $str .= "selected";
+        } else {
+            $str .= "";
+        }
+        $str .= ">
+                            {$row['name']}
+                        </option>     ";
+    }
+    $str .= "
+        </select>
+    </div>
     
+    <!-- district  -->
+    <div class='mb-2'>
+        <label for='district' class='form-label me-3  name'>District: </label>
+        <select name='district' id='district' class='select-area'>";
+    $sql = "SELECT * FROM district_tb";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute();
+    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+        $str .= "<option value='{$row['id']}'";
+        if ($result['district'] == $row['id']) {
+            $str .= "selected";
+        } else {
+            $str .= "";
+        }
+        $str .= ">
+                                {$row['name']}
+                            </option>     ";
+    }
+    $str .= "
+            </select>
+        </div>
 
+        <!-- upazila  -->
+                    <div class='mb-2'>
+                        <label for='upazila' class='form-label me-3 name'>Upazila: </label>
+                        <select name='upazila' id='upazila' class='select-area'>";
+    $sql = "SELECT * FROM upazila_tb";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute();
+    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+        $str .= "<option value='{$row['id']}'";
+        if ($result['upazila'] == $row['id']) {
+            $str .= "selected";
+        } else {
+            $str .= "";
+        }
+        $str .= ">
+                                                    {$row['name']}
+                                                </option>     ";
+    }
+    $str .= "
+                                </select>
+                            </div>
 
-
-
-    
-
-
+                            <!-- address  -->
+                            <div class='mb-2'>
+                                <textarea class='form-control me-2' id='address' name='address' rows='4' cols='50'>{$result['address']}</textarea>
+                            </div>
+                            <!-- edit button  -->
+                            <button class='btn btn-primary w-100 edit-submit-btn'>Update </button>
                     </div>
-
              </div>
-            </form>
         </div>
         ";
     echo $str;
 }
+
+if ($sessionUser  && $_POST['type'] == "edit-submit") {
+    $id = $_POST['id'];
+    echo $id;
+}
+
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous">
+    </script>
+    <script type="text/javascript" src="jquery.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            function loadLocationData(type, category_id) {
+                $.ajax({
+                    url: 'load-cs.php',
+                    type: 'POST',
+                    data: {
+                        type: type,
+                        id: category_id
+                    },
+                    success: function(data) {
+                        if (type === "upazilaData") {
+                            $("#upazila").html(data)
+                        } else if (type === "districtData") {
+                            $("#district").html(data)
+                        }
+                    }
+                });
+            }
+            loadLocationData();
+
+            $("#division").on("change", function() {
+                var division = $("#division").val();
+                console.log(division)
+                if (division != "") {
+                    loadLocationData("districtData", division);
+                } else {
+                    $("#district").html("");
+                }
+            })
+
+            $("#district").on("change", function() {
+                var district = $("#district").val();
+                if (district != "") {
+                    loadLocationData("upazilaData", district);
+                } else {
+                    $("#upazila").html("");
+                }
+            })
+        })
+    </script>
+</body>
+
+</html>

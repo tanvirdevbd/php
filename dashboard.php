@@ -18,58 +18,57 @@ if (isset($_GET['search'])) {
     $updateAfterSearchValue = $_GET['search'];
 }
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $filename = $_FILES["uploadfile"]["name"];
-    $tempname = $_FILES["uploadfile"]["tmp_name"];
-    $folder = "images/" . $filename;
-    move_uploaded_file($tempname, $folder);
+// if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+//     $firstname = $_POST['firstname'];
+//     $middlename = $_POST['middlename'];
+//     $lastname = $_POST['lastname'];
+//     $email = $_POST['email'];
 
-    $firstname = $_POST['firstname'];
-    $middlename = $_POST['middlename'];
-    $lastname = $_POST['lastname'];
-    $email = $_POST['email'];
+//     $sql = "SELECT * FROM `registration` WHERE email='$email' ";
 
-    $sql = "SELECT * FROM `registration` WHERE email='$email' ";
+//     $stmt = $pdo->prepare($sql);
 
-    $stmt = $pdo->prepare($sql);
+//     $stmt->execute();
 
-    $stmt->execute();
+//     $resEmail = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    $resEmail = $stmt->fetch(PDO::FETCH_ASSOC);
+//     if (!$resEmail) {
+//         $password = $_POST['password'];
+//         $retypepassword = $_POST['retypepassword'];
+//         $class = $_POST['class'];
+//         $gender = $_POST['gender'];
+//         $division = $_POST['division'];
+//         $district = $_POST['district'];
+//         $upazila = $_POST['upazila'];
+//         $address = $_POST['address'];
 
-    if (!$resEmail) {
-        $password = $_POST['password'];
-        $retypepassword = $_POST['retypepassword'];
-        $class = $_POST['class'];
-        $gender = $_POST['gender'];
-        $division = $_POST['division'];
-        $district = $_POST['district'];
-        $upazila = $_POST['upazila'];
-        $address = $_POST['address'];
-        $std_img = $folder;
+//         $filename = $_FILES["uploadfile"]["name"];
+//         $tempname = $_FILES["uploadfile"]["tmp_name"];
+//         $folder = "images/" . $filename;
+//         move_uploaded_file($tempname, $folder);
+//         $std_img = $folder;
 
-        $phone = $_POST['phone'];
-        $pattern = "/^(?:\+?88)?01[3-9$]\d{8}/";
-        if (!preg_match($pattern, $phone)) {
-            $errorMessage = "Phone number is not valid BD number";
-        } else {
-            $sql = "INSERT INTO `registration`(std_img, firstname, middlename, lastname, phone, email, password, retypepassword, class, gender, division, district, upazila, address) VALUES(:std_img, :firstname, :middlename, :lastname, :phone, :email, :password, :retypepassword, :class, :gender, :division, :district, :upazila,  :address)";
+//         $phone = $_POST['phone'];
+//         $pattern = "/^(?:\+?88)?01[3-9$]\d{8}/";
+//         if (!preg_match($pattern, $phone)) {
+//             $errorMessage = "Phone number is not valid BD number";
+//         } else {
+//             $sql = "INSERT INTO `registration`(std_img, firstname, middlename, lastname, phone, email, password, retypepassword, class, gender, division, district, upazila, address) VALUES(:std_img, :firstname, :middlename, :lastname, :phone, :email, :password, :retypepassword, :class, :gender, :division, :district, :upazila,  :address)";
 
-            $stmt = $pdo->prepare($sql);
+//             $stmt = $pdo->prepare($sql);
 
-            $result = $stmt->execute(['std_img' => $std_img, 'firstname' => $firstname, 'middlename' => $middlename, 'lastname' => $lastname, 'phone' => $phone,  'email' => $email,  'password' => $password,  'retypepassword' => $retypepassword, 'class' => $class, 'gender' => $gender, 'division' => $division, 'district' => $district, 'upazila' => $upazila, 'address' => $address]);
+//             $result = $stmt->execute(['std_img' => $std_img, 'firstname' => $firstname, 'middlename' => $middlename, 'lastname' => $lastname, 'phone' => $phone,  'email' => $email,  'password' => $password,  'retypepassword' => $retypepassword, 'class' => $class, 'gender' => $gender, 'division' => $division, 'district' => $district, 'upazila' => $upazila, 'address' => $address]);
 
-            if ($result) {
-                $success = "User added Successfully";
-            } else {
-                $errorMessage = "User not added";
-            }
-        }
-    } else {
-        $errorMessage = "Email already exists give a new email for complete registration";
-    }
-}
-
+//             if ($result) {
+//                 $success = "User added Successfully";
+//             } else {
+//                 $errorMessage = "User not added";
+//             }
+//         }
+//     } else {
+//         $errorMessage = "Email already exists give a new email for complete registration";
+//     }
+// }
 ?>
 
 <!DOCTYPE html>
@@ -99,7 +98,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     ?>
         <div class="d-flex justify-content-end">
             <!-- edit Modal start-->
-            <div class="modal fade modal-lg" id="editUserModal" tabindex="-1" aria-labelledby="editUserModalLabel" aria-hidden="true">
+            <div class="modal modal-tall fade modal-xl" id="editUserModal" tabindex="-1" aria-labelledby="editUserModalLabel" aria-hidden="true">
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header">
@@ -107,7 +106,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
-
                         </div>
                     </div>
                 </div>
@@ -119,7 +117,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 Add New User
             </button>
 
-            <div class="modal fade modal-lg" id="addUserModal" tabindex="-1" aria-labelledby="addUserModalLabel" aria-hidden="true">
+            <div class="modal  modal-tall fade modal-xl" id="addUserModal" tabindex="-1" aria-labelledby="addUserModalLabel" aria-hidden="true">
                 <div class="modal-dialog  modal-dialog-centered">
                     <div class="modal-content">
                         <div class="modal-header">
@@ -334,6 +332,50 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 }
             })
 
+            $(document).on('click', '.edit-btn', function() {
+                userId = $(this).data("eid");
+                $.ajax({
+                    url: 'load-up.php',
+                    type: 'POST',
+                    data: {
+                        type: "edit",
+                        id: userId
+                    },
+                    success: function(data) {
+                        $(".modal-body").html(data)
+                    }
+                });
+            })
+
+            $(document).on('click', '.edit-submit-btn', function() {
+                var firstname = $("#firstname").val();
+                var middlename = $("#middlename").val();
+                var lastname = $("#lastname").val();
+                var email = $("#email").val();
+                var password = $("#password").val();
+                var retypepassword = $("#retypepassword").val();
+                var phone = $("#phone").val();
+                var user_type = $("#user_type").val();
+                var classNum = $("#class").val();
+                var division = $("#division").val();
+                var district = $("#district").val();
+                var upazila = $("#upazila").val();
+                console.log("upazila", upazila);
+
+                // $.ajax({
+                //     url: 'load-up.php',
+                //     type: 'POST',
+                //     data: {
+                //         type: "edit-submit",
+                //         id: userId
+                //     },
+                //     success: function(data) {
+                //         console.log(data);
+                //         // loadData();
+                //     }
+                // });
+            })
+
             function loadClass() {
                 $.ajax({
                     url: 'load-cs.php',
@@ -347,22 +389,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 });
             }
             loadClass();
-
-            $(document).on('click', '.edit-btn', function() {
-                var userId = $(this).data("eid");
-                $.ajax({
-                    url: 'load-up.php',
-                    type: 'POST',
-                    data: {
-                        type: "edit",
-                        id: userId
-                    },
-                    success: function(data) {
-                        $(".modal-body").html(data)
-                        // alert(data)
-                    }
-                });
-            })
         })
 
         function checkdelete() {
