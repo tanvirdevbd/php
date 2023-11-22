@@ -148,9 +148,8 @@ if ($sessionUser && $_POST['type'] == "search") {
         }
         $trSingle .=  "</td>
         <td>
-            <a href='update-registered-students.php?id={$row['id']}'>
-             <button class='btn btn-warning mb-2'>Update </button>
-            </a>
+             <button type='button' class='btn btn-warning mt-1 me-2 edit-btn' data-bs-toggle='modal' data-bs-target='#editUserModal'  data-eid='{$row["id"]}'> Update
+              </button>
              <a href='delete.php?id={$row['id']}'>
              <button class='btn btn-danger' onclick='return checkdelete()'>Delete </button>
             </a>
@@ -228,17 +227,6 @@ if ($sessionUser && $_POST['type'] == "search") {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
 if ($_POST['type'] == "classData") {
     $sql = "SELECT * FROM class_tb";
 
@@ -284,3 +272,136 @@ if ($_POST['type'] == "classData") {
     }
 }
 echo $str;
+
+if($sessionUser && $_POST['type'] == "edit"){
+ $sql = "SELECT * FROM registration";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute();
+
+    $str = "";
+    $rowNum = 0;
+    $trSingle = "
+    <div class='form-section'>
+                        <form action='dashboard.php' method='POST' enctype="multipart/form-data">
+                            <div class='left'>
+                                <!-- firstname  -->
+                                <div class="mb-2 me-2">
+                                    <input type="text" class="form-control" id="firstname" name="firstname"
+                                        placeholder="Enter First Name" required>
+                                </div>
+
+                                <!-- middlename  -->
+                                <div class="mb-2 me-2">
+                                    <input type="text" class="form-control" id="middlename" name="middlename"
+                                        placeholder="Enter Middle Name">
+                                </div>
+
+                                <!-- lastname  -->
+                                <div class="mb-2 me-2">
+                                    <input type="text" class="form-control" id="lastname" name="lastname"
+                                        placeholder="Enter Last Name" required>
+                                </div>
+                                <!-- email -->
+                                <div class="mb-2  me-2">
+                                    <input type="email" class="form-control" id="email" name="email" required
+                                        placeholder="Enter Email" required>
+                                </div>
+                                <!-- password -->
+                                <div class="mb-2  me-2">
+                                    <input type="password" class="form-control" id="password" name="password"
+                                        placeholder="Enter Password" required>
+                                </div>
+
+                                <!-- re type password -->
+                                <div class="mb-2 me-2">
+                                    <input type="password" class="form-control" id="retypepassword"
+                                        name="retypepassword" required placeholder="Re Enter Password">
+                                </div>
+                                <!-- phone  -->
+                                <div class="mb-2 me-2">
+                                    <input type="text" class="form-control" id="phone" name="phone"
+                                        placeholder="Enter Phone Number" required>
+                                </div>
+
+                                <!-- image  -->
+                                <div class="mb-4 me-2">
+                                    <label for="image" class="form-label name">Profile Picture: </label>
+                                    <input type="file" name="uploadfile" id="" class="ms-0">
+                                </div>
+                                <!-- gallery images  -->
+                                <div class="mb-2 me-2">
+                                    <label for="gallery-images" class="form-label name">Gallery Images: </label>
+                                    <input type="file" name="files[]" multiple>
+                                    <div class="d-flex">
+                                        <?php
+                            $gallery_imagesArr = [];
+                            $gallery_imagesArr = explode(',', $result['gallery_images']);
+                            if (count($gallery_imagesArr)) {
+                                foreach ($gallery_imagesArr as $x => $singleImage) {
+                                    echo "<img src='photo_gallery/{$singleImage}' alt='gallery_images'  width='40' height='40' style='border-radius: 50%;'>";
+                                }
+                            }
+                            ?>
+</div>
+</div>
+</div>
+<div class='right'>
+    <!-- gender  -->
+    <div class="mb-2">
+        <label for="gender" class="form-label me-3 name">Gender: </label>
+        <input type="radio" id="male" name="gender" value="MALE" required>
+        <label for="html" class='mx-1'>Male</label>
+        <input type="radio" id="female" name="gender" value="FEMALE" required>
+        <label for="html" class='mx-1'>Female</label>
+        <input type="radio" id="others" name="gender" value="OTHERS" required>
+        <label for="html" class='mx-1'>Others</label>
+    </div>
+    <!-- class  -->
+    <div class="mb-2">
+        <label for="class" class="form-label me-4 name">Class: </label>
+        <select name="class" id="class" class="select-area" required>
+            <option value="">Select Class</option>
+        </select>
+    </div>
+    <!-- division  -->
+    <div class="mb-2">
+        <label for="division" class="form-label me-2 name">Division: </label>
+        <select name="division" id="division" class="select-area">
+            <option value="">Select Division</option>
+        </select>
+    </div>
+    <!-- district  -->
+    <div class="mb-2">
+        <label for="district" class="form-label me-3  name">District: </label>
+        <select name="district" id="district" class="select-area">
+            <option value=""></option>
+        </select>
+    </div>
+    <!-- upazila  -->
+    <div class="mb-2">
+        <label for="upazila" class="form-label me-3 name">Upazila: </label>
+        <select name="upazila" id="upazila" class="select-area">
+            <option value=""></option>
+        </select>
+    </div>
+    <!-- address  -->
+    <div class="mb-2">
+        <textarea class="form-control me-2" id="address" name="address" rows="4" cols="50"
+            placeholder="Enter Address"></textarea>
+    </div>
+    <!-- register button  -->
+    <button type="submit" class="btn btn-primary">Update User</button>
+    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+</div>
+</form>
+</div>
+";
+
+// while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+// $gallery_imagesArr = explode(',', $row['gallery_images']);
+// $rowNum++;
+// // $trSingle = "
+// }
+
+echo $str;
+}
