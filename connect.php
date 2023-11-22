@@ -9,8 +9,8 @@ try {
   echo "Connection failed: " . $e->getMessage();
 }
 
+// var_dump($gallery_images);
 // echo "<pre>";
 // print_r($gallery_images);
 // echo "</pre>";
-// var_dump($gallery_images);
 // die;
