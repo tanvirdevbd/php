@@ -118,7 +118,13 @@ if ($sessionUser && $_POST['type'] == "search") {
         $stmt1 = $pdo->prepare($sql1);
         $stmt1->execute(['id' => $row['division']]);
         $divisionRes = $stmt1->fetch(PDO::FETCH_ASSOC);
-        $trSingle .=  $divisionRes['name'];
+
+        if (!$divisionRes) {
+            $trSingle .=  "";
+        } else {
+            $trSingle .=  $divisionRes['name'];
+        }
+
         $trSingle .= "</td>
 
         <td>";
@@ -126,7 +132,13 @@ if ($sessionUser && $_POST['type'] == "search") {
         $stmt2 = $pdo->prepare($sql2);
         $stmt2->execute(['id' => $row['district']]);
         $districtRes = $stmt2->fetch(PDO::FETCH_ASSOC);
-        $trSingle .=  $districtRes['name'];
+
+        if (!$districtRes) {
+            $trSingle .=  "";
+        } else {
+            $trSingle .=  $districtRes['name'];
+        }
+
         $trSingle .= "</td>
 
         <td>";
@@ -134,7 +146,13 @@ if ($sessionUser && $_POST['type'] == "search") {
         $stmt3 = $pdo->prepare($sql3);
         $stmt3->execute(['id' => $row['upazila']]);
         $upazilaRes = $stmt3->fetch(PDO::FETCH_ASSOC);
-        $trSingle .=  $upazilaRes['name'];
+
+        if (!$upazilaRes) {
+            $trSingle .=  "";
+        } else {
+            $trSingle .=  $upazilaRes['name'];
+        }
+
         $trSingle .= "</td>
 
         <td>{$row['address']}</td>
