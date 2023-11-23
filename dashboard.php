@@ -53,7 +53,7 @@ if (isset($_GET['search'])) {
                             <h5 class="modal-title" id="editUserModalLabel">Update User Info</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
-                        <div class="modal-body">
+                        <div class="edit-modal-body">
                         </div>
                     </div>
                 </div>
@@ -74,7 +74,7 @@ if (isset($_GET['search'])) {
                         </div>
                         <div class="modal-body">
                             <div class='form-section'>
-                                <form id="data" method="post" enctype="multipart/form-data">
+                                <form id="insert-form" method="post" enctype="multipart/form-data">
                                     <div class='left'>
                                         <!-- firstname  -->
                                         <div class="mb-2 me-2">
@@ -216,10 +216,6 @@ if (isset($_GET['search'])) {
     <script type="text/javascript">
         $(document).ready(function() {
             function loadData(type = "", category_id = "") {
-                if (<?php echo $updateAfterSearchInfo ?>) {
-                    type = "search";
-                    category_id = "<?php echo $updateAfterSearchValue ?>";
-                }
                 $.ajax({
                     url: 'load-rs.php',
                     type: 'POST',
@@ -281,7 +277,8 @@ if (isset($_GET['search'])) {
             })
 
             $(document).on('click', '.edit-btn', function() {
-                userId = $(this).data("eid");
+                var userId = $(this).data("eid");
+                // alert(userId);
                 $.ajax({
                     url: 'load-up.php',
                     type: 'POST',
@@ -290,12 +287,12 @@ if (isset($_GET['search'])) {
                         id: userId
                     },
                     success: function(data) {
-                        $(".modal-body").html(data)
+                        $(".edit-modal-body").html(data);
                     }
                 });
             })
 
-            $("form#data").on('submit', function(e) {
+            $("form#insert-form").on('submit', function(e) {
                 e.preventDefault();
                 var formData = new FormData(this);
                 $.ajax({

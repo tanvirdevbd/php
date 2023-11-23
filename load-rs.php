@@ -41,7 +41,11 @@ if ($sessionUser && $_POST['type'] == "search") {
         $stmt1 = $pdo->prepare($sql1);
         $stmt1->execute(['id' => $row['division']]);
         $divisionRes = $stmt1->fetch(PDO::FETCH_ASSOC);
-        $trSingle .=  $divisionRes['name'];
+        if (!$divisionRes) {
+            $trSingle .=  "";
+        } else {
+            $trSingle .=  $divisionRes['name'];
+        }
         $trSingle .= "</td>
     
             <td>";
@@ -49,7 +53,11 @@ if ($sessionUser && $_POST['type'] == "search") {
         $stmt2 = $pdo->prepare($sql2);
         $stmt2->execute(['id' => $row['district']]);
         $districtRes = $stmt2->fetch(PDO::FETCH_ASSOC);
-        $trSingle .=  $districtRes['name'];
+        if (!$districtRes) {
+            $trSingle .=  "";
+        } else {
+            $trSingle .=  $districtRes['name'];
+        }
         $trSingle .= "</td>    
     
             <td>";
@@ -57,7 +65,13 @@ if ($sessionUser && $_POST['type'] == "search") {
         $stmt3 = $pdo->prepare($sql3);
         $stmt3->execute(['id' => $row['upazila']]);
         $upazilaRes = $stmt3->fetch(PDO::FETCH_ASSOC);
-        $trSingle .=  $upazilaRes['name'];
+
+        if (!$upazilaRes) {
+            $trSingle .=  "";
+        } else {
+            $trSingle .=  $upazilaRes['name'];
+        }
+
         $trSingle .= "</td>
             <td>{$row['address']}</td>
             <td>{$row['email']}</td>
@@ -70,9 +84,8 @@ if ($sessionUser && $_POST['type'] == "search") {
         }
         $trSingle .=  "</td>
             <td>
-                <a href='update-registered-students.php?id={$row['id']}&search={$searchedTerm}'>
-                 <button class='btn btn-warning mb-2'>Update </button>
-                </a>
+            <button type='button' class='btn btn-warning mt-1 me-2 edit-btn' data-bs-toggle='modal' data-bs-target='#editUserModal' data-eid='{$row["id"]}'> Update
+            </button>
                  <a href='delete.php?id={$row['id']}'>
                  <button class='btn btn-danger' onclick='return checkdelete()'>Delete </button>
                 </a>
@@ -166,7 +179,7 @@ if ($sessionUser && $_POST['type'] == "search") {
         }
         $trSingle .=  "</td>
         <td>
-             <button type='button' class='btn btn-warning mt-1 me-2 edit-btn' data-bs-toggle='modal' data-bs-target='#editUserModal'  data-eid='{$row["id"]}'> Update
+             <button type='button' class='btn btn-warning mt-1 me-2 edit-btn' data-bs-toggle='modal' data-bs-target='#editUserModal' data-eid='{$row["id"]}'> Update
               </button>
              <a href='delete.php?id={$row['id']}'>
              <button class='btn btn-danger' onclick='return checkdelete()'>Delete </button>
@@ -231,9 +244,8 @@ if ($sessionUser && $_POST['type'] == "search") {
         <td>{$res['email']}</td>
         <td>{$res['password']}</td>
         <td>
-            <a href='update-registered-students.php?id={$res['id']}'>
-             <button class='btn btn-warning mb-2'>Update </button>
-            </a>
+        <button type='button' class='btn btn-warning mt-1 me-2 edit-btn' data-bs-toggle='modal' data-bs-target='#editUserModal' data-eid='{$res["id"]}'> Update
+        </button>
              <a href='delete.php?id={$res['id']}'>
              <button class='btn btn-danger' onclick='return checkdelete()'>Delete </button>
             </a>
@@ -286,15 +298,4 @@ if ($_POST['type'] == "classData") {
     while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         $str .= "<option value='{$row['id']}'>{$row['name']}</option>";
     }
-}
-
-if ($sessionUser && $_POST['type'] == "edit") {
-    $sql = "SELECT * FROM registration";
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute();
-
-    $str = "<h1> Hi </h1>";
-
-
-    echo $str;
 }

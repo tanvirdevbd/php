@@ -6,25 +6,22 @@ $sessionUser = $_SESSION['user_type'];
 $sessionId = $_SESSION['id'];
 $gallery_imagesArr = [];
 
-if ($sessionUser  && $_POST['type'] == "edit") {
+if ($_POST['type'] == "edit") {
     $sql = "SELECT * FROM registration WHERE id={$_POST['id']}";
+    echo $sql;
     $stmt = $pdo->prepare($sql);
     $stmt->execute();
     $result = $stmt->fetch(PDO::FETCH_ASSOC);
     $gallery_imagesArr = explode(',', $result['gallery_images']);
 
-    // var_dump($result);
-    // echo "<pre>";
-    // print_r($sql);
-    // echo "</pre>";
-    // die;
-
     $str = "
     <div class='form-section'>
+    <form id='edit-form' method='post' enctype='multipart/form-data'>
                 <div class='left'>
                     <!-- firstname  -->
                     <div class='mb-2 me-2'>
                         <input type='text' class='form-control' id='firstname' name='firstname' placeholder='Enter First Name' value='{$result['firstname']}'>
+                        <input hidden type='text' class='form-control' id='user_own_id' name='user_own_id' value='{$_POST['id']}'>
                     </div>
                     <!-- middlename  -->
                     <div class='mb-2 me-2'>
@@ -106,7 +103,7 @@ if ($sessionUser  && $_POST['type'] == "edit") {
 
 
 
-                        
+
                         <!-- user  -->";
     if ($sessionUser) {
         $str .=
@@ -177,7 +174,7 @@ if ($sessionUser  && $_POST['type'] == "edit") {
     $str .= "
         </select>
     </div>
-    
+
     <!-- district  -->
     <div class='mb-2'>
         <label for='district' class='form-label me-3  name'>District: </label>
@@ -227,17 +224,12 @@ if ($sessionUser  && $_POST['type'] == "edit") {
                                 <textarea class='form-control me-2' id='address' name='address' rows='4' cols='50'>{$result['address']}</textarea>
                             </div>
                             <!-- edit button  -->
-                            <button class='btn btn-primary w-100 edit-submit-btn'>Update </button>
+                            <button type='submit' class='btn btn-primary w-100' data-bs-dismiss='modal'>Update </button>
                     </div>
+                    </form>
              </div>
-        </div>
         ";
     echo $str;
-}
-
-if ($sessionUser  && $_POST['type'] == "edit-submit") {
-    $id = $_POST['id'];
-    echo $id;
 }
 
 ?>
@@ -257,6 +249,21 @@ if ($sessionUser  && $_POST['type'] == "edit-submit") {
     <script type="text/javascript" src="jquery.js"></script>
     <script type="text/javascript">
         $(document).ready(function() {
+            function loadData(type = "", category_id = "") {
+                $.ajax({
+                    url: 'load-rs.php',
+                    type: 'POST',
+                    data: {
+                        type: type,
+                        id: category_id
+                    },
+                    success: function(data) {
+                        $("#registered_students").html(data);
+                    }
+                });
+            }
+            loadData();
+
             function loadLocationData(type, category_id) {
                 $.ajax({
                     url: 'load-cs.php',
@@ -293,6 +300,26 @@ if ($sessionUser  && $_POST['type'] == "edit-submit") {
                 } else {
                     $("#upazila").html("");
                 }
+            })
+
+            $("form#edit-form").on('submit', function(e) {
+                e.preventDefault();
+                var formData = new FormData(this);
+                $.ajax({
+                    url: 'ajax-update.php',
+                    type: 'POST',
+                    data: formData,
+                    success: function(data) {
+                        if (data) {
+                            loadData();
+                        } else {
+                            alert('User not updated')
+                        }
+                    },
+                    cache: false,
+                    contentType: false,
+                    processData: false
+                });
             })
         })
     </script>
