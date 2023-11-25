@@ -8,7 +8,6 @@ $gallery_imagesArr = [];
 
 if ($_POST['type'] == "edit") {
     $sql = "SELECT * FROM registration WHERE id={$_POST['id']}";
-    echo $sql;
     $stmt = $pdo->prepare($sql);
     $stmt->execute();
     $result = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -156,22 +155,7 @@ if ($_POST['type'] == "edit") {
     <!-- division  -->
     <div class='mb-2'>
         <label for='division' class='form-label me-2 name'>Division: </label>
-        <select name='division' id='division' class='select-area'>";
-    $sql = "SELECT * FROM division_tb";
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute();
-    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-        $str .= "<option value='{$row['id']}'";
-        if ($result['division'] == $row['id']) {
-            $str .= "selected";
-        } else {
-            $str .= "";
-        }
-        $str .= ">
-                            {$row['name']}
-                        </option>     ";
-    }
-    $str .= "
+        <select name='division' id='division' class='select-area'>
         </select>
     </div>
 
@@ -262,9 +246,8 @@ if ($_POST['type'] == "edit") {
                     }
                 });
             }
-            loadData();
 
-            function loadLocationData(type, category_id) {
+            function loadLocationData(type = "", category_id = "") {
                 $.ajax({
                     url: 'load-cs.php',
                     type: 'POST',
@@ -277,6 +260,8 @@ if ($_POST['type'] == "edit") {
                             $("#upazila").html(data)
                         } else if (type === "districtData") {
                             $("#district").html(data)
+                        } else {
+                            $("#division").append(data)
                         }
                     }
                 });

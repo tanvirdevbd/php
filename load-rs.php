@@ -5,13 +5,13 @@ include 'connect.php';
 $sessionUser = $_SESSION['user_type'];
 $sessionId = $_SESSION['id'];
 $gallery_imagesArr = [];
-
+$str = "";
 if ($sessionUser && $_POST['type'] == "search") {
     $searchedTerm = $_POST['id'];
     $sql = "SELECT * FROM registration  WHERE firstname LIKE '%$searchedTerm%' OR phone LIKE '%$searchedTerm%'";
     $stmt = $pdo->prepare($sql);
     $res11 = $stmt->execute();
-    $str = "";
+    // $str = "";
     $rowNum = 0;
     while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         $gallery_imagesArr = explode(',', $row['gallery_images']);
@@ -100,7 +100,6 @@ if ($sessionUser && $_POST['type'] == "search") {
     $stmt = $pdo->prepare($sql);
     $stmt->execute();
 
-    $str = "";
     $rowNum = 0;
     while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         $gallery_imagesArr = explode(',', $row['gallery_images']);
@@ -179,8 +178,8 @@ if ($sessionUser && $_POST['type'] == "search") {
         }
         $trSingle .=  "</td>
         <td>
-             <button type='button' class='btn btn-warning mt-1 me-2 edit-btn' data-bs-toggle='modal' data-bs-target='#editUserModal' data-eid='{$row["id"]}'> Update
-              </button>
+        <button type='button' class='btn btn-warning mt-1 me-2 edit-btn' data-eid='{$row["id"]}'> Update
+        </button>
              <a href='delete.php?id={$row['id']}'>
              <button class='btn btn-danger' onclick='return checkdelete()'>Delete </button>
             </a>
@@ -244,8 +243,9 @@ if ($sessionUser && $_POST['type'] == "search") {
         <td>{$res['email']}</td>
         <td>{$res['password']}</td>
         <td>
-        <button type='button' class='btn btn-warning mt-1 me-2 edit-btn' data-bs-toggle='modal' data-bs-target='#editUserModal' data-eid='{$res["id"]}'> Update
-        </button>
+        <button type='button' class='btn btn-warning mt-1 me-2 edit-btn' data-eid='{$res["id"]}'> Update
+        </button>   
+
              <a href='delete.php?id={$res['id']}'>
              <button class='btn btn-danger' onclick='return checkdelete()'>Delete </button>
             </a>
