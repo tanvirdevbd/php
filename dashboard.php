@@ -42,7 +42,7 @@ if (isset($_GET['search'])) {
     }
 
 
-    if ($_SESSION['user_type'] == 1) {
+    if ($_SESSION['user_type'] == 1 || $_SESSION['user_type'] == 0) {
     ?>
         <div class="d-flex justify-content-end">
             <!-- edit Modal start-->
@@ -59,7 +59,10 @@ if (isset($_GET['search'])) {
                 </div>
             </div>
             <!-- edit Modal end-->
-
+        <?php
+    }
+    if ($_SESSION['user_type'] == 1) {
+        ?>
             <!-- add Modal start-->
             <button type="button" class="btn btn-primary mt-1 me-2 add-btn" data-bs-toggle="modal" data-bs-target="#addUserModal">
                 Add New User
@@ -168,9 +171,10 @@ if (isset($_GET['search'])) {
                         id: userId
                     },
                     success: function(data) {
-                        alert(data);
                         $("#editUserModal").modal("show");
                         $("#modal-body-edit").html(data);
+
+                        console.log('data got')
                     }
                 });
             })

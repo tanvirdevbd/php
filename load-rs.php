@@ -178,7 +178,7 @@ if ($sessionUser && $_POST['type'] == "search") {
         }
         $trSingle .=  "</td>
         <td>
-        <button type='button' class='btn btn-warning mt-1 me-2 edit-btn' data-eid='{$row["id"]}'> Update
+        <button type='button' class='btn btn-warning mt-1 me-2 edit-btn' data-eid='{$row["id"]}' data-bs-toggle='modal' data-bs-target='#editUserModal'> Update
         </button>
              <a href='delete.php?id={$row['id']}'>
              <button class='btn btn-danger' onclick='return checkdelete()'>Delete </button>
@@ -243,7 +243,7 @@ if ($sessionUser && $_POST['type'] == "search") {
         <td>{$res['email']}</td>
         <td>{$res['password']}</td>
         <td>
-        <button type='button' class='btn btn-warning mt-1 me-2 edit-btn' data-eid='{$res["id"]}'> Update
+        <button type='button' class='btn btn-warning mt-1 me-2 edit-btn' data-eid='{$res["id"]}' data-bs-toggle='modal' data-bs-target='#editUserModal' > Update
         </button>   
 
              <a href='delete.php?id={$res['id']}'>
