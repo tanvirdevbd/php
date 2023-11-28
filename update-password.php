@@ -140,6 +140,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 .getAttribute('type') === 'password' ?
                 'text' : 'password';
             confirmNewPassword.setAttribute('type', type);
+            // TODO:  eye icon change during toggle not working
             this.classList.toggle('bi-eye');
         });
     </script>

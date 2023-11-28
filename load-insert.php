@@ -1,5 +1,5 @@
 <?php
-
+include 'connect.php';
 ?>
 
 <!DOCTYPE html>
@@ -19,12 +19,10 @@
             <div class="mb-2 me-2">
                 <input type="text" class="form-control" id="firstname" name="firstname" placeholder="Enter First Name" required>
             </div>
-
             <!-- middlename  -->
             <div class="mb-2 me-2">
                 <input type="text" class="form-control" id="middlename" name="middlename" placeholder="Enter Middle Name">
             </div>
-
             <!-- lastname  -->
             <div class="mb-2 me-2">
                 <input type="text" class="form-control" id="lastname" name="lastname" placeholder="Enter Last Name" required>
@@ -37,7 +35,6 @@
             <div class="mb-2  me-2">
                 <input type="password" class="form-control" id="password" name="password" placeholder="Enter Password" required>
             </div>
-
             <!-- re type password -->
             <div class="mb-2 me-2">
                 <input type="password" class="form-control" id="retypepassword" name="retypepassword" required placeholder="Re Enter Password">
@@ -46,7 +43,6 @@
             <div class="mb-2 me-2">
                 <input type="text" class="form-control" id="phone" name="phone" placeholder="Enter Phone Number" required>
             </div>
-
             <!-- image  -->
             <div class="mb-4 me-2">
                 <label for="image" class="form-label name">Profile Picture: </label>
@@ -64,18 +60,46 @@
                 <input type="radio" id="others" name="gender" value="OTHERS" class="gender" required>
                 <label for="html" class='mx-1'>Others</label>
             </div>
+            <!-- user type  -->
+            <div class='mb-2'>
+                <label for='user_type' class='form-label me-4 name'>User: </label>
+                <select name='user_type' id='user_type' class='select-area'>
+                    <option value='1'>Admin </option>
+                    <option value='0'>Student </option>
+                </select>
+            </div>
             <!-- class  -->
             <div class="mb-2">
                 <label for="class" class="form-label me-4 name">Class: </label>
                 <select name="class" id="class" class="select-area" required>
                     <option value="">Select Class</option>
+                    <?php
+                    $sql = "SELECT * FROM class_tb";
+                    $stmt = $pdo->prepare($sql);
+                    $stmt->execute();
+                    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                    ?>
+                        <option value="<?php echo $row['id'] ?>"><?php echo $row['name'] ?></option>
+                    <?php
+                    }
+                    ?>
                 </select>
             </div>
             <!-- division  -->
             <div class="mb-2">
                 <label for="division" class="form-label me-2 name">Division: </label>
                 <select name="division" id="division" class="select-area">
-                    <option value="">Select Division</option>
+                    <option value="">Select division</option>
+                    <?php
+                    $sql1 = "SELECT * FROM division_tb";
+                    $stmt1 = $pdo->prepare($sql1);
+                    $stmt1->execute();
+                    while ($row1 = $stmt1->fetch(PDO::FETCH_ASSOC)) {
+                    ?>
+                        <option value="<?php echo $row1['id'] ?>"><?php echo $row1['name'] ?></option>
+                    <?php
+                    }
+                    ?>
                 </select>
             </div>
             <!-- district  -->
@@ -116,24 +140,12 @@
                         id: category_id
                     },
                     success: function(data) {
-                        $("#registered_students").html(data);
+                        if (data) {
+                            $("#registered_students").html(data);
+                        }
                     }
                 });
             }
-
-            function loadClass() {
-                $.ajax({
-                    url: 'load-cs.php',
-                    type: 'POST',
-                    data: {
-                        type: "classData"
-                    },
-                    success: function(data) {
-                        $("#class").append(data);
-                    }
-                });
-            }
-            loadClass();
 
             function loadLocationData(type = "", category_id = "") {
                 $.ajax({
@@ -144,17 +156,14 @@
                         id: category_id
                     },
                     success: function(data) {
-                        if (type == "upazilaData") {
+                        if (type === "upazilaData") {
                             $("#upazila").html(data)
-                        } else if (type == "districtData") {
+                        } else if (type === "districtData") {
                             $("#district").html(data)
-                        } else {
-                            $("#division").append(data)
                         }
                     }
                 });
             }
-            loadLocationData();
 
             $("#division").on("change", function() {
                 var division = $("#division").val();
@@ -183,9 +192,18 @@
                     data: formData,
                     success: function(data) {
                         if (data) {
+                            $("#error-modal").hide().slideUp();
+                            $("#success-modal").html("Successfully User Added").show().slideDown();
+                            setTimeout(function() {
+                                $("#success-modal").hide().slideUp();
+                            }, 3000)
                             loadData();
                         } else {
-                            alert('User not inserted')
+                            $("#error-modal").html("User add failed").show().slideDown();
+                            $("#success-modal").hide().slideUp();
+                            setTimeout(function() {
+                                $("#error-modal").hide().slideUp();
+                            }, 3000)
                         }
                     },
                     cache: false,

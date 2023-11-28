@@ -6,29 +6,34 @@ $sessionUser = $_SESSION['user_type'];
 $sessionId = $_SESSION['id'];
 $gallery_imagesArr = [];
 $str = "";
+
 if ($sessionUser && $_POST['type'] == "search") {
     $searchedTerm = $_POST['id'];
-    $sql = "SELECT * FROM registration  WHERE firstname LIKE '%$searchedTerm%' OR phone LIKE '%$searchedTerm%'";
+    $sql = "SELECT * FROM registration WHERE firstname LIKE '%$searchedTerm%' OR phone LIKE '%$searchedTerm%'";
     $stmt = $pdo->prepare($sql);
-    $res11 = $stmt->execute();
-    // $str = "";
-    $rowNum = 0;
-    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-        $gallery_imagesArr = explode(',', $row['gallery_images']);
-        $rowNum++;
-        $trSingle = "
+    $stmt->execute();
+
+    $totalRes = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    if (count($totalRes)) {
+        $trSingle = "";
+        $rowNum = 0;
+        foreach ($totalRes as $key => $row) {
+            $gallery_imagesArr = explode(',', $row['gallery_images']);
+            $rowNum++;
+            $trSingle = "
         <tr>
             <th scope='row'>{$rowNum}</th>       
             <td>
                 <img src='{$row['std_img']}' alt='Profile image' width='80' height='80' style='border-radius: 50%;'>
             </td>
             <td class='d-flex flex-wrap gallery-area'>";
-        if (count($gallery_imagesArr)) {
-            foreach ($gallery_imagesArr as $x => $singleImage) {
-                $trSingle .= "<img src='photo_gallery/{$singleImage}' alt='gallery_images'  width='40' height='40' class='single-image'>";
-            }
-        };
-        $trSingle .= "
+            if (count($gallery_imagesArr)) {
+                foreach ($gallery_imagesArr as $x => $singleImage) {
+                    $trSingle .= "<img src='photo_gallery/{$singleImage}' alt='gallery_images'  width='40' height='40' class='single-image'>";
+                }
+            };
+            $trSingle .= "
             </td>
             <td>{$row['firstname']}</td>
             <td>{$row['middlename']}</td>
@@ -37,64 +42,66 @@ if ($sessionUser && $_POST['type'] == "search") {
             <td>{$row['class']}</td>
             <td>{$row['gender']}</td>
             <td>";
-        $sql1 = "SELECT name from division_tb where id=:id";
-        $stmt1 = $pdo->prepare($sql1);
-        $stmt1->execute(['id' => $row['division']]);
-        $divisionRes = $stmt1->fetch(PDO::FETCH_ASSOC);
-        if (!$divisionRes) {
-            $trSingle .=  "";
-        } else {
-            $trSingle .=  $divisionRes['name'];
-        }
-        $trSingle .= "</td>
+            $sql1 = "SELECT name from division_tb where id=:id";
+            $stmt1 = $pdo->prepare($sql1);
+            $stmt1->execute(['id' => $row['division']]);
+            $divisionRes = $stmt1->fetch(PDO::FETCH_ASSOC);
+            if (!$divisionRes) {
+                $trSingle .=  "";
+            } else {
+                $trSingle .=  $divisionRes['name'];
+            }
+            $trSingle .= "</td>
     
             <td>";
-        $sql2 = "SELECT name from district_tb where id=:id";
-        $stmt2 = $pdo->prepare($sql2);
-        $stmt2->execute(['id' => $row['district']]);
-        $districtRes = $stmt2->fetch(PDO::FETCH_ASSOC);
-        if (!$districtRes) {
-            $trSingle .=  "";
-        } else {
-            $trSingle .=  $districtRes['name'];
-        }
-        $trSingle .= "</td>    
+            $sql2 = "SELECT name from district_tb where id=:id";
+            $stmt2 = $pdo->prepare($sql2);
+            $stmt2->execute(['id' => $row['district']]);
+            $districtRes = $stmt2->fetch(PDO::FETCH_ASSOC);
+            if (!$districtRes) {
+                $trSingle .=  "";
+            } else {
+                $trSingle .=  $districtRes['name'];
+            }
+            $trSingle .= "</td>    
     
             <td>";
-        $sql3 = "SELECT name from upazila_tb where id=:id";
-        $stmt3 = $pdo->prepare($sql3);
-        $stmt3->execute(['id' => $row['upazila']]);
-        $upazilaRes = $stmt3->fetch(PDO::FETCH_ASSOC);
+            $sql3 = "SELECT name from upazila_tb where id=:id";
+            $stmt3 = $pdo->prepare($sql3);
+            $stmt3->execute(['id' => $row['upazila']]);
+            $upazilaRes = $stmt3->fetch(PDO::FETCH_ASSOC);
 
-        if (!$upazilaRes) {
-            $trSingle .=  "";
-        } else {
-            $trSingle .=  $upazilaRes['name'];
-        }
+            if (!$upazilaRes) {
+                $trSingle .=  "";
+            } else {
+                $trSingle .=  $upazilaRes['name'];
+            }
 
-        $trSingle .= "</td>
+            $trSingle .= "</td>
             <td>{$row['address']}</td>
             <td>{$row['email']}</td>
             <td>{$row['password']}</td>
             <td>";
-        if ($row['user_type'] == 1) {
-            $trSingle .= 'Admin';
-        } else if ($row['user_type'] == 0) {
-            $trSingle .= 'Student';
-        }
-        $trSingle .=  "</td>
+            if ($row['user_type'] == 1) {
+                $trSingle .= 'Admin';
+            } else if ($row['user_type'] == 0) {
+                $trSingle .= 'Student';
+            }
+            $trSingle .=  "</td>
             <td>
             <button type='button' class='btn btn-warning mt-1 me-2 edit-btn' data-bs-toggle='modal' data-bs-target='#editUserModal' data-eid='{$row["id"]}'> Update
             </button>
-                 <a href='delete.php?id={$row['id']}'>
-                 <button class='btn btn-danger' onclick='return checkdelete()'>Delete </button>
-                </a>
+            <button class='btn btn-danger delete-btn' data-did='{$row["id"]}'> Delete </button>
             </td>    
         </tr>
         ";
-        $str .= $trSingle;
+            $str .= $trSingle;
+        }
+        echo $str;
+    } else {
+        $str = "<h3>No data found</h3>";
+        echo $str;
     }
-    echo $str;
 } else if ($sessionUser  && $_POST['type'] == "") {
     $sql = "SELECT * FROM registration";
     $stmt = $pdo->prepare($sql);
@@ -180,9 +187,7 @@ if ($sessionUser && $_POST['type'] == "search") {
         <td>
         <button type='button' class='btn btn-warning mt-1 me-2 edit-btn' data-eid='{$row["id"]}' data-bs-toggle='modal' data-bs-target='#editUserModal'> Update
         </button>
-             <a href='delete.php?id={$row['id']}'>
-             <button class='btn btn-danger' onclick='return checkdelete()'>Delete </button>
-            </a>
+        <button class='btn btn-danger delete-btn' data-did='{$row["id"]}'> Delete </button>
         </td>    
     </tr>
     ";
@@ -244,11 +249,7 @@ if ($sessionUser && $_POST['type'] == "search") {
         <td>{$res['password']}</td>
         <td>
         <button type='button' class='btn btn-warning mt-1 me-2 edit-btn' data-eid='{$res["id"]}' data-bs-toggle='modal' data-bs-target='#editUserModal' > Update
-        </button>   
-
-             <a href='delete.php?id={$res['id']}'>
-             <button class='btn btn-danger' onclick='return checkdelete()'>Delete </button>
-            </a>
+        </button>
         </td>    
     </tr>
     ";

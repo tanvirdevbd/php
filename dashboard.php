@@ -1,10 +1,6 @@
 <?php
 session_start();
 
-$success = 0;
-$error = 0;
-$errorMessage = "";
-
 if (!$_SESSION["id"]) {
     header("Location: login.php");
 }
@@ -34,16 +30,15 @@ if (isset($_GET['search'])) {
 <body>
     <?php
     include 'menu.php';
-    if ($success) {
-        echo "<div class='alert alert-success' role='alert'>" . $success . "</div>";
-        echo "<meta http-equiv='refresh' content='1;url=dashboard.php'>";
-    } else if ($errorMessage) {
-        echo '<div class="alert alert-danger" role="alert">' . $errorMessage . '</div>';
-    }
-
 
     if ($_SESSION['user_type'] == 1 || $_SESSION['user_type'] == 0) {
     ?>
+        <div style="width: 40%;">
+            <p id='error-modal' style="background-color: red;
+  color: white;"></p>
+            <p id='success-modal' style="background-color: green;
+  color: white;"></p>
+        </div>
         <div class="d-flex justify-content-end">
             <!-- edit Modal start-->
             <div id="editUserModal" class="modal modal-tall fade modal-xl" tabindex="-1" aria-labelledby="editUserModalLabel" aria-hidden="true">
@@ -75,12 +70,13 @@ if (isset($_GET['search'])) {
                             <h5 class="modal-title" id="addUserModalLabel">User Info</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
-                        <div class="modal-body">
+                        <div class="modal-body" id="modal-body-add-user">
 
                         </div>
                     </div>
                 </div>
             </div>
+
             <!-- add Modal end-->
             <input type="text" id="search-info" name="search-info" class="my-2 p-2 me-3 search-dashboard" placeholder="Type name or phone to Search">
         </div>
@@ -146,8 +142,10 @@ if (isset($_GET['search'])) {
 
             $("#search-info").on('keyup', function() {
                 var searchInfo = $("#search-info").val();
-                if (searchInfo != "") {
+                if (searchInfo.length) {
                     loadData("search", searchInfo);
+                } else {
+                    loadData();
                 }
             })
 
@@ -156,7 +154,7 @@ if (isset($_GET['search'])) {
                     url: 'load-insert.php',
                     type: 'POST',
                     success: function(data) {
-                        $(".modal-body").append(data);
+                        $("#modal-body-add-user").html(data);
                     }
                 });
             })
@@ -173,18 +171,40 @@ if (isset($_GET['search'])) {
                     success: function(data) {
                         $("#editUserModal").modal("show");
                         $("#modal-body-edit").html(data);
-
-                        console.log('data got')
                     }
                 });
             })
 
+            $(document).on('click', '.delete-btn', function() {
+                let deleteResponse = confirm(`Do you really want to delete?`);
+                if (deleteResponse) {
+                    let userId = $(this).data("did");
+                    $.ajax({
+                        url: 'delete.php',
+                        type: 'POST',
+                        data: {
+                            id: userId
+                        },
+                        success: function(data) {
+                            if (data) {
+                                $("#error-modal").hide().slideUp();
+                                $("#success-modal").html("Successfully deleted User").show().slideDown();
+                                setTimeout(function() {
+                                    $("#success-modal").hide().slideUp();
+                                }, 3000)
+                                loadData();
+                            } else {
+                                $("#error-modal").html("Delete failed").show().slideDown();
+                                $("#success-modal").hide().slideUp();
+                                setTimeout(function() {
+                                    $("#error-modal").hide().slideUp();
+                                }, 3000)
+                            }
+                        }
+                    })
+                }
+            })
         })
-
-
-        function checkdelete() {
-            return confirm(`Do you really want to delete?`)
-        }
     </script>
 </body>
 

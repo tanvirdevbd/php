@@ -13,6 +13,8 @@ if ($_POST['type'] == "edit") {
     $result = $stmt->fetch(PDO::FETCH_ASSOC);
     $gallery_imagesArr = explode(',', $result['gallery_images']);
 
+    //TODO: send form as html not as string
+
     $str = "
     <div class='form-section'>
     <form id='edit-form' method='post' enctype='multipart/form-data'>
@@ -133,7 +135,7 @@ if ($_POST['type'] == "edit") {
     <!-- class  -->
     <div class='mb-2'>
         <label for='class' class='form-label me-4 name'>Class: </label>
-        <select name='class' id='class' class='select-area'";
+        <select name='class' id='class' class='select-area'>";
     $sql = "SELECT * FROM class_tb";
     $stmt = $pdo->prepare($sql);
     $stmt->execute();
@@ -270,7 +272,6 @@ if ($_POST['type'] == "edit") {
 
             $("#division").on("change", function() {
                 var division = $("#division").val();
-                console.log(division)
                 if (division != "") {
                     loadLocationData("districtData", division);
                 } else {
@@ -295,10 +296,20 @@ if ($_POST['type'] == "edit") {
                     type: 'POST',
                     data: formData,
                     success: function(data) {
-                        if (data) {
+                        let message = JSON.parse(data);
+                        if (message.successMessage) {
+                            $("#success-modal").html(message.successMessage).show();
+                            setTimeout(function() {
+                                $("#success-modal").hide();
+                            }, 3000);
+                            $("#error-modal").hide();
                             loadData();
                         } else {
-                            alert('User not updated')
+                            $("#error-modal").html(message.errorMessage).show().slideDown();
+                            setTimeout(function() {
+                                $("#error-modal").hide().slideUp();
+                            }, 3000);
+                            $("#success-modal").hide().slideUp();
                         }
                     },
                     cache: false,

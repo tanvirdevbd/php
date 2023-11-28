@@ -2,7 +2,7 @@
 include "connect.php";
 $success = 0;
 $errorValue = 0;
-$errorMessage = "";
+$message = array("errorMessage" => "", "successMessage" => "");
 
 $user_own_id = $_POST['user_own_id'];
 
@@ -52,11 +52,11 @@ foreach ($_FILES["files"]["tmp_name"] as $key => $tmp_name) {
                 }
             } else {
                 $errorValue = 1;
-                $errorMessage = "File size is larger than 120KB. Uplaod size limit 120KB";
+                $message["errorMessage"] = "File size is larger than 120KB. Uplaod size limit 120KB";
             }
         } else {
             $errorValue = 1;
-            $errorMessage = "Less than 4 images selected";
+            $message["errorMessage"] = "Less than 4 images selected";
         }
     } else {
         array_push($error, "$file_name, ");
@@ -69,7 +69,6 @@ if ($allImages == $result['gallery_images'] || $allImages == '') {
     $gallery_images = $allImages;
 }
 
-
 $firstname = $_POST['firstname'];
 $middlename = $_POST['middlename'];
 $lastname = $_POST['lastname'];
@@ -78,7 +77,7 @@ $phone = $_POST['phone'];
 $pattern = "/^(?:\+?88)?01[3-9$]\d{8}/";
 if (!preg_match($pattern, $phone)) {
     $errorValue = 1;
-    $errorMessage = "Phone number is not valid BD number";
+    $message["errorMessage"] = "Phone number is not valid BD number";
 }
 
 $email = $_POST['email'];
@@ -92,9 +91,6 @@ $upazila = "";
 if (isset($_POST['district']) && isset($_POST['upazila'])) {
     $district = $_POST['district'];
     $upazila = $_POST['upazila'];
-} else {
-    $errorValue = 1;
-    $errorMessage = "Please select your district & upazila";
 }
 $address = $_POST['address'];
 
@@ -102,6 +98,13 @@ $user_type = "";
 if (isset($_POST['user_type'])) {
     $user_type = $_POST['user_type'];
 }
+
+// var_dump($errorValue);
+// echo "<pre>";
+// print_r($errorValue);
+// echo "</pre>";
+// die;
+
 if (!$errorValue) {
     $sql = "UPDATE `registration`
                     SET firstname=:firstname,
@@ -121,19 +124,17 @@ if (!$errorValue) {
                     user_type=:user_type,
                     gallery_images=:gallery_images
                     WHERE id=$user_own_id";
+
     $stmt = $pdo->prepare($sql);
 
     $res = $stmt->execute(['firstname' => $firstname, 'middlename' => $middlename, 'lastname' => $lastname, 'phone' => $phone, 'email' => $email, 'password' => $password, 'retypepassword' => $retypepassword, 'class' => $class, 'gender' => $gender, 'division' => $division, 'district' => $district, 'upazila' => $upazila, 'address' => $address, 'std_img' => $std_img, 'user_type' => $user_type, 'gallery_images' => $gallery_images]);
 
     if ($res) {
-        $success = "User Updated Successfully";
+        $message["successMessage"] = "Successfully updated";
     } else {
-        $errorMessage = "User Update Failed";
+        $message["errorMessage"] = "Update failed";
     }
-}
-
-if ($result) {
-    echo 1;
+    echo json_encode($message);
 } else {
-    echo 0;
+    echo json_encode($message);
 }
