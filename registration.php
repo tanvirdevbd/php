@@ -36,7 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $std_img = $folder;
 
         $phone = $_POST['phone'];
-        $pattern = "/^(?:\+?88)?01[3-9$]\d{8}/";
+        $pattern = "/^(?:\+88|88)?(01[3-9]\d{8})$/";
         if (!preg_match($pattern, $phone)) {
             $errorMessage = "Phone number is not valid BD number";
         } else {
@@ -65,8 +65,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Student Registration</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <link rel="stylesheet" href="style.css">
 </head>
 
@@ -90,41 +89,34 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <div class='left'>
                     <!-- firstname  -->
                     <div class="mb-2 me-2">
-                        <input type="text" class="form-control" id="firstname" name="firstname"
-                            placeholder="Enter First Name" required>
+                        <input type="text" class="form-control" id="firstname" name="firstname" placeholder="Enter First Name" required>
                     </div>
 
                     <!-- middlename  -->
                     <div class="mb-2 me-2">
-                        <input type="text" class="form-control" id="middlename" name="middlename"
-                            placeholder="Enter Middle Name">
+                        <input type="text" class="form-control" id="middlename" name="middlename" placeholder="Enter Middle Name">
                     </div>
 
                     <!-- lastname  -->
                     <div class="mb-2 me-2">
-                        <input type="text" class="form-control" id="lastname" name="lastname"
-                            placeholder="Enter Last Name" required>
+                        <input type="text" class="form-control" id="lastname" name="lastname" placeholder="Enter Last Name" required>
                     </div>
                     <!-- email -->
                     <div class="mb-2  me-2">
-                        <input type="email" class="form-control" id="email" name="email" required
-                            placeholder="Enter Email" required>
+                        <input type="email" class="form-control" id="email" name="email" required placeholder="Enter Email" required>
                     </div>
                     <!-- password -->
                     <div class="mb-2  me-2">
-                        <input type="password" class="form-control" id="password" name="password"
-                            placeholder="Enter Password" required>
+                        <input type="password" class="form-control" id="password" name="password" placeholder="Enter Password" required>
                     </div>
 
                     <!-- re type password -->
                     <div class="mb-2 me-2">
-                        <input type="password" class="form-control" id="retypepassword" name="retypepassword" required
-                            placeholder="Re Enter Password">
+                        <input type="password" class="form-control" id="retypepassword" name="retypepassword" required placeholder="Re Enter Password">
                     </div>
                     <!-- phone  -->
                     <div class="mb-2 me-2">
-                        <input type="text" class="form-control" id="phone" name="phone" placeholder="Enter Phone Number"
-                            required>
+                        <input type="text" class="form-control" id="phone" name="phone" placeholder="Enter Phone Number" required>
                     </div>
 
                     <!-- image  -->
@@ -174,8 +166,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     </div>
                     <!-- address  -->
                     <div class="mb-2">
-                        <textarea class="form-control me-2" id="address" name="address" rows="4" cols="50"
-                            placeholder="Enter Address"></textarea>
+                        <textarea class="form-control me-2" id="address" name="address" rows="4" cols="50" placeholder="Enter Address"></textarea>
                     </div>
                     <!-- register button  -->
                     <button type="submit" class="reg-btn w-100">Register</button>
@@ -191,60 +182,60 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <script type="text/javascript" src="jquery.js"></script>
 
     <script type="text/javascript">
-    $(document).ready(function() {
-        function loadData(type, category_id) {
-            $.ajax({
-                url: 'load-cs.php',
-                type: 'POST',
-                data: {
-                    type: type,
-                    id: category_id
-                },
-                success: function(data) {
-                    if (type === "upazilaData") {
-                        $("#upazila").html(data)
-                    } else if (type === "districtData") {
-                        $("#district").html(data)
-                    } else {
-                        $("#division").append(data)
+        $(document).ready(function() {
+            function loadData(type, category_id) {
+                $.ajax({
+                    url: 'load-cs.php',
+                    type: 'POST',
+                    data: {
+                        type: type,
+                        id: category_id
+                    },
+                    success: function(data) {
+                        if (type === "upazilaData") {
+                            $("#upazila").html(data)
+                        } else if (type === "districtData") {
+                            $("#district").html(data)
+                        } else {
+                            $("#division").append(data)
+                        }
                     }
-                }
-            });
-        }
-        loadData();
-
-        $("#division").on("change", function() {
-            var division = $("#division").val();
-            if (division != "") {
-                loadData("districtData", division);
-            } else {
-                $("#district").html("");
+                });
             }
-        })
+            loadData();
 
-        $("#district").on("change", function() {
-            var district = $("#district").val();
-            if (district != "") {
-                loadData("upazilaData", district);
-            } else {
-                $("#upazila").html("");
-            }
-        })
-
-        function loadClass() {
-            $.ajax({
-                url: 'load-cs.php',
-                type: 'POST',
-                data: {
-                    type: "classData"
-                },
-                success: function(data) {
-                    $("#class").append(data)
+            $("#division").on("change", function() {
+                var division = $("#division").val();
+                if (division != "") {
+                    loadData("districtData", division);
+                } else {
+                    $("#district").html("");
                 }
-            });
-        }
-        loadClass();
-    })
+            })
+
+            $("#district").on("change", function() {
+                var district = $("#district").val();
+                if (district != "") {
+                    loadData("upazilaData", district);
+                } else {
+                    $("#upazila").html("");
+                }
+            })
+
+            function loadClass() {
+                $.ajax({
+                    url: 'load-cs.php',
+                    type: 'POST',
+                    data: {
+                        type: "classData"
+                    },
+                    success: function(data) {
+                        $("#class").append(data)
+                    }
+                });
+            }
+            loadClass();
+        })
     </script>
 </body>
 

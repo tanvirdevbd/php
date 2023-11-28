@@ -46,7 +46,7 @@ include 'connect.php';
             <!-- image  -->
             <div class="mb-4 me-2">
                 <label for="image" class="form-label name">Profile Picture: </label>
-                <input type="file" name="uploadfile" id="" class="ms-0">
+                <input type="file" name="uploadfile" id="" class="ms-0" required>
             </div>
         </div>
         <div class='right'>
@@ -121,8 +121,16 @@ include 'connect.php';
                 <textarea class="form-control me-2" id="address" name="address" rows="4" cols="50" placeholder="Enter Address"></textarea>
             </div>
             <!-- register button  -->
-            <button type="submit" id="save-button" class="btn btn-primary" data-bs-dismiss="modal">Add User</button>
+            <button type="submit" id="save-button" class="btn btn-primary">Add User</button>
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+
+            <div class="mt-3" style="width: 100%;">
+                <p id='user-add-error-modal' style="background-color: red;
+  color: white;"></p>
+                <p id='user-add-success-modal' style="background-color: green;
+  color: white;"></p>
+            </div>
+
         </div>
     </form>
 
@@ -191,18 +199,22 @@ include 'connect.php';
                     type: 'POST',
                     data: formData,
                     success: function(data) {
-                        if (data) {
-                            $("#error-modal").hide().slideUp();
-                            $("#success-modal").html("Successfully User Added").show().slideDown();
+                        console.log(data)
+                        let toastMessage = JSON.parse(data);
+                        if (toastMessage.successMessage) {
+                            $("#user-add-error-modal").hide().slideUp();
+                            $("#user-add-success-modal").html(toastMessage.successMessage).show().slideDown();
                             setTimeout(function() {
-                                $("#success-modal").hide().slideUp();
+                                $("#user-add-success-modal").hide().slideUp();
                             }, 3000)
+                            // TODO: modal hide not working after add user
+                            $("#addUserModal").modal("hide");
                             loadData();
                         } else {
-                            $("#error-modal").html("User add failed").show().slideDown();
-                            $("#success-modal").hide().slideUp();
+                            $("#user-add-error-modal").html(toastMessage.errorMessage).show().slideDown();
+                            $("#user-add-success-modal").hide().slideUp();
                             setTimeout(function() {
-                                $("#error-modal").hide().slideUp();
+                                $("#user-add-error-modal").hide().slideUp();
                             }, 3000)
                         }
                     },
