@@ -5,7 +5,7 @@ if (!$_SESSION["id"]) {
 }
 include 'connect.php';
 
-$success = 0;
+$successValue = 0;
 $error = 0;
 $errorMessage = "";
 
@@ -48,7 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $res = $stmt->execute(['std_img' => $folder]);
 
     if ($res) {
-        $success = "Profile Picture Updated Successfully";
+        $successValue = "Profile Picture Updated Successfully";
     } else {
         $errorMessage = "Profile Picture Update Failed";
     }
@@ -69,8 +69,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <body>
 
     <?php
-    if ($success) {
-        echo "<div class='alert alert-success' role='alert'>" . $success . "</div>";
+    if ($successValue) {
+        echo "<div class='alert alert-success' role='alert'>" . $successValue . "</div>";
         echo "<meta http-equiv='refresh' content='1;url=dashboard.php'>";
     } else if ($errorMessage) {
         echo '<div class="alert alert-danger" role="alert">' . $errorMessage . '</div>';

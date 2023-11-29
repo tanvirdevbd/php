@@ -87,21 +87,21 @@ if (isset($_GET['search'])) {
         <table class="table table-striped">
             <thead>
                 <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">Image</th>
-                    <th scope="col">Gallery images</th>
-                    <th scope="col">First name</th>
-                    <th scope="col">Middle name</th>
-                    <th scope="col">Last Name</th>
-                    <th scope="col">Phone</th>
-                    <th scope="col">Class</th>
-                    <th scope="col">Gender</th>
-                    <th scope="col">Division</th>
-                    <th scope="col">District</th>
-                    <th scope="col">Upazila</th>
-                    <th scope="col">Address</th>
-                    <th scope="col">Email</th>
-                    <th scope="col">Password</th>
+                    <th scope="col" style="width: 6%;">#</th>
+                    <th scope="col" style="width: 6%;">Image</th>
+                    <th scope="col" style="width: 6%;">Gallery images</th>
+                    <th scope="col" style="width: 6%;">First name</th>
+                    <th scope="col" style="width: 6%;">Middle name</th>
+                    <th scope="col" style="width: 6%;">Last Name</th>
+                    <th scope="col" style="width: 6%;">Phone</th>
+                    <th scope="col" style="width: 6%;">Class</th>
+                    <th scope="col" style="width: 6%;">Gender</th>
+                    <th scope="col" style="width: 6%;">Division</th>
+                    <th scope="col" style="width: 6%;">District</th>
+                    <th scope="col" style="width: 6%;">Upazila</th>
+                    <th scope="col" style="width: 6%;">Address</th>
+                    <th scope="col" style="width: 6%;">Email</th>
+                    <th scope="col" style="width: 6%;">Password</th>
                     <?php
                     $sessionId = $_SESSION['id'];
                     $sql1 = "SELECT * FROM registration WHERE id=:id";
@@ -112,7 +112,7 @@ if (isset($_GET['search'])) {
                         echo '<th scope="col">User Type</th>';
                     }
                     ?>
-                    <th scope="col">Action</th>
+                    <th scope="col" style="width: 6%;">Action</th>
                 </tr>
             </thead>
             <tbody id='registered_students'>

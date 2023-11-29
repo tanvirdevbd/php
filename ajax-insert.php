@@ -17,7 +17,6 @@ if ($row) {
     $errorValue = 1;
     $message["errorMessage"] = "Email already exists";
 } else {
-
     $password = $_POST['password'];
     if (strlen($password) < 8) {
         $errorValue = 1;
@@ -32,9 +31,6 @@ if ($row) {
         $errorValue = 1;
         $message["errorMessage"] = "Number not included in your password";
     }
-
-
-
     $retypepassword = $_POST['retypepassword'];
     if ($password != $retypepassword) {
         $message["errorMessage"] = "New Password & Confirmed password not matched";
@@ -47,31 +43,37 @@ if ($row) {
         $message["errorMessage"] = "Phone number is not valid BD number";
     }
 
-    // image 
-    $extension = array("jpeg", "jpg", "png", "gif");
-    $maxsize = 120 * 1024;
-    $file_name = $_FILES["uploadfile"]["name"];;
-    $file_tmp = $_FILES["uploadfile"]["tmp_name"];
-    $file_size = $_FILES["uploadfile"]["size"];
-    $ext = pathinfo($file_name, PATHINFO_EXTENSION);
+    // profile image 
+    $std_img = "";
+    $std_img_prof = "";
+    $extension_prof = array("jpeg", "jpg", "png", "gif");
+    $maxsize_prof = 120 * 1024;
+    $file_name_prof = $_FILES["uploadfile"]["name"];
+    if (strlen($file_name_prof)) {
+        $file_tmp_prof = $_FILES["uploadfile"]["tmp_name"];
+        $file_size_prof = $_FILES["uploadfile"]["size"];
+        $ext_prof = pathinfo($file_name_prof, PATHINFO_EXTENSION);
 
-    if (in_array($ext, $extension)) {
-        if ($file_size < $maxsize) {
-            if (!file_exists("images/" . $file_name)) {
-                $std_img = "images/" . $file_name;
-                move_uploaded_file($file_tmp, $std_img);
+        if (in_array($ext_prof, $extension_prof)) {
+            if ($file_size_prof < $maxsize_prof) {
+                if (!file_exists("images/" . $file_name_prof)) {
+                    $std_img_prof = "images/" . $file_name_prof;
+                    move_uploaded_file($file_tmp_prof, $std_img_prof);
+                } else {
+                    $filename_prof = basename($file_name_prof, $ext_prof);
+                    $newFileName_prof = $filename_prof . time() . "." . $ext_prof;
+                    $std_img_prof = "images/" . $newFileName_prof;
+                    move_uploaded_file($file_tmp_prof, $std_img_prof);
+                }
             } else {
-                $filename = basename($file_name, $ext);
-                $newFileName = $filename . time() . "." . $ext;
-                $std_img = "images/" . $newFileName;
-                move_uploaded_file($file_tmp, $std_img);
+                $errorValue = 1;
+                $message["errorMessage"] = "File size is larger than 120KB";
             }
         } else {
             $errorValue = 1;
-            $message["errorMessage"] = "File size is larger than 120KB";
+            $message["errorMessage"] = "Only jpeg jpg png gif type image support for profile";
         }
-    } else {
-        $message["errorMessage"] = "Only jpeg jpg png gif type image support";
+        $std_img = $std_img_prof;
     }
 
     $gender = $_POST['gender'];

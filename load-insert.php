@@ -46,7 +46,7 @@ include 'connect.php';
             <!-- image  -->
             <div class="mb-4 me-2">
                 <label for="image" class="form-label name">Profile Picture: </label>
-                <input type="file" name="uploadfile" id="" class="ms-0" required>
+                <input type="file" name="uploadfile" id="" class="ms-0">
             </div>
         </div>
         <div class='right'>
@@ -63,9 +63,10 @@ include 'connect.php';
             <!-- user type  -->
             <div class='mb-2'>
                 <label for='user_type' class='form-label me-4 name'>User: </label>
-                <select name='user_type' id='user_type' class='select-area'>
-                    <option value='1'>Admin </option>
+                <select name='user_type' id='user_type' class='select-area' required>
+                    <option value="">Select User Type</option>
                     <option value='0'>Student </option>
+                    <option value='1'>Admin </option>
                 </select>
             </div>
             <!-- class  -->
@@ -199,7 +200,6 @@ include 'connect.php';
                     type: 'POST',
                     data: formData,
                     success: function(data) {
-                        console.log(data)
                         let toastMessage = JSON.parse(data);
                         if (toastMessage.successMessage) {
                             $("#user-add-error-modal").hide().slideUp();

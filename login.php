@@ -1,21 +1,19 @@
 <?php
 session_start();
+include 'connect.php';
 
-$success = 0;
+$successValue = 0;
 $error = 0;
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    include 'connect.php';
     $email = $_POST['email'];
     $password = $_POST['password'];
-
     $sql = "SELECT * FROM `registration` WHERE email = :email AND password = :password";
-
     $stmt = $pdo->prepare($sql);
     $stmt->execute(['email' => $email, 'password' => $password]);
     $result = $stmt->fetch(PDO::FETCH_ASSOC);
-
     if ($result) {
-        $success = 1;
+        $successValue = 1;
         $_SESSION["user_type"] = $result['user_type'];
         $_SESSION["id"] = $result['id'];
         header("Location: dashboard.php");
@@ -24,6 +22,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 }
 ?>
+
+
 <!doctype html>
 <html lang="en">
 
@@ -38,7 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <body>
 
     <?php
-    if ($success) {
+    if ($successValue) {
         echo '<div class="alert alert-success" role="alert">
             Login successful
             </div>';

@@ -1,11 +1,12 @@
 <?php
 include 'connect.php';
 
-$success = 0;
+$successValue = 0;
 $error = 0;
 $errorMessage = "";
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    // TODO: remaining validation apply 
     $filename = $_FILES["uploadfile"]["name"];
     $tempname = $_FILES["uploadfile"]["tmp_name"];
     $folder = "images/" . $filename;
@@ -47,7 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $result = $stmt->execute(['std_img' => $std_img, 'firstname' => $firstname, 'middlename' => $middlename, 'lastname' => $lastname, 'phone' => $phone,  'email' => $email,  'password' => $password,  'retypepassword' => $retypepassword, 'class' => $class, 'gender' => $gender, 'division' => $division, 'district' => $district, 'upazila' => $upazila, 'address' => $address]);
 
             if ($result) {
-                $success = "Registration Successful";
+                $successValue = "Registration Successful";
             } else {
                 $errorMessage = "Registration Failed";
             }
@@ -72,8 +73,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <body>
 
     <?php
-    if ($success) {
-        echo "<div class='alert alert-success' role='alert'>" . $success . "</div>";
+    if ($successValue) {
+        echo "<div class='alert alert-success' role='alert'>" . $successValue . "</div>";
         echo "<meta http-equiv='refresh' content='1;url=login.php'>";
     } else if ($errorMessage) {
         echo '<div class="alert alert-danger" role="alert">' . $errorMessage . '</div>';

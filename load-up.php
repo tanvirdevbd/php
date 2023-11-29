@@ -34,7 +34,7 @@ if ($_POST['type'] == "edit") {
                     </div>
                     <!-- email -->
                     <div class='mb-2 me-2'>
-                        <input type='email' class='form-control' id='email' name='email' required placeholder='Enter Email' value='{$result['email']}'>
+                        <input type='email' class='form-control' id='email' name='email' disabled placeholder='Enter Email' value='{$result['email']}'>
                     </div>
                     <!-- password -->
                     <div class='mb-2 me-2'>
@@ -158,17 +158,34 @@ if ($_POST['type'] == "edit") {
     <div class='mb-2'>
         <label for='division' class='form-label me-2 name'>Division: </label>
         <select name='division' id='division' class='select-area'>
+        <option value=''>Select Division</option>";
+    $sql1 = "SELECT * FROM division_tb";
+    $stmt1 = $pdo->prepare($sql1);
+    $stmt1->execute();
+    while ($row = $stmt1->fetch(PDO::FETCH_ASSOC)) {
+        $str .= "<option value='{$row['id']}'";
+        if ($result['division'] == $row['id']) {
+            $str .= "selected";
+        } else {
+            $str .= "";
+        }
+        $str .= ">
+                                    {$row['name']}
+                                </option>     ";
+    }
+    $str .= "
         </select>
     </div>
 
     <!-- district  -->
     <div class='mb-2'>
         <label for='district' class='form-label me-3  name'>District: </label>
-        <select name='district' id='district' class='select-area'>";
-    $sql = "SELECT * FROM district_tb";
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute();
-    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+        <select name='district' id='district' class='select-area'>
+        <option value=''>Select District</option>";
+    $sql2 = "SELECT * FROM district_tb";
+    $stmt2 = $pdo->prepare($sql2);
+    $stmt2->execute();
+    while ($row = $stmt2->fetch(PDO::FETCH_ASSOC)) {
         $str .= "<option value='{$row['id']}'";
         if ($result['district'] == $row['id']) {
             $str .= "selected";
@@ -186,11 +203,12 @@ if ($_POST['type'] == "edit") {
         <!-- upazila  -->
                     <div class='mb-2'>
                         <label for='upazila' class='form-label me-3 name'>Upazila: </label>
-                        <select name='upazila' id='upazila' class='select-area'>";
-    $sql = "SELECT * FROM upazila_tb";
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute();
-    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                        <select name='upazila' id='upazila' class='select-area'>
+                        <option value=''>Select Upazila</option> ";
+    $sql3 = "SELECT * FROM upazila_tb";
+    $stmt3 = $pdo->prepare($sql3);
+    $stmt3->execute();
+    while ($row = $stmt3->fetch(PDO::FETCH_ASSOC)) {
         $str .= "<option value='{$row['id']}'";
         if ($result['upazila'] == $row['id']) {
             $str .= "selected";
@@ -210,14 +228,19 @@ if ($_POST['type'] == "edit") {
                                 <textarea class='form-control me-2' id='address' name='address' rows='4' cols='50'>{$result['address']}</textarea>
                             </div>
                             <!-- edit button  -->
-                            <button type='submit' class='btn btn-primary w-100' data-bs-dismiss='modal'>Update </button>
-                    </div>
+                            <button type='submit' class='btn btn-primary w-100'>Update </button>
+                            <div class='mt-2' style='width: 40%;'>
+                    <p id='error-modal-edit' style='background-color: red;
+          color: white;'></p>
+                    <p id='success-modal-edit' style='background-color: green;
+          color: white;'></p>
+                </div>
+                    </div>                    
                     </form>
              </div>
         ";
     echo $str;
 }
-
 ?>
 
 <!DOCTYPE html>
@@ -262,8 +285,6 @@ if ($_POST['type'] == "edit") {
                             $("#upazila").html(data)
                         } else if (type === "districtData") {
                             $("#district").html(data)
-                        } else {
-                            $("#division").append(data)
                         }
                     }
                 });
@@ -296,20 +317,23 @@ if ($_POST['type'] == "edit") {
                     type: 'POST',
                     data: formData,
                     success: function(data) {
+                        console.log(data)
                         let message = JSON.parse(data);
                         if (message.successMessage) {
-                            $("#success-modal").html(message.successMessage).show();
+                            $("#success-modal-edit").html(message.successMessage).show();
                             setTimeout(function() {
-                                $("#success-modal").hide();
+                                $("#success-modal-edit").hide();
                             }, 3000);
-                            $("#error-modal").hide();
+                            $("#error-modal-edit").hide();
+                            // TODO: modal hide not working after add user
+                            $("#editUserModal").modal("hide");
                             loadData();
                         } else {
-                            $("#error-modal").html(message.errorMessage).show().slideDown();
+                            $("#error-modal-edit").html(message.errorMessage).show().slideDown();
                             setTimeout(function() {
-                                $("#error-modal").hide().slideUp();
+                                $("#error-modal-edit").hide().slideUp();
                             }, 3000);
-                            $("#success-modal").hide().slideUp();
+                            $("#success-modal-edit").hide().slideUp();
                         }
                     },
                     cache: false,

@@ -6,7 +6,7 @@ if (!$_SESSION["id"]) {
 
 include 'connect.php';
 
-$success = 0;
+$successValue = 0;
 $error = 0;
 $errorMessage = "";
 
@@ -38,7 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $stmt = $pdo->prepare($sql);
             $res = $stmt->execute(['password' => $newPassword]);
             if ($res) {
-                $success = "New Password updated successfully";
+                $successValue = "New Password updated successfully";
             } else {
                 $errorMessage = "New Password not updated";
             }
@@ -64,9 +64,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <body>
 
     <?php
-    if ($success) {
+    if ($successValue) {
         echo '<div class="alert alert-success" role="alert">'
-            . $success .
+            . $successValue .
             '</div>';
         echo "<meta http-equiv='refresh' content='0;url=dashboard.php'>";;
         die;
@@ -84,7 +84,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <form method='post'>
                 <!-- old password -->
                 <div class="mb-2 me-2">
-                    <label for="old-password"> Old Password</label>
+                    <label for="old-password"> Old Password </label>
                     <div class="d-flex">
                         <input type="password" class="form-control" id="oldPassword" name="oldPassword" placeholder="Enter Old Password" required><i class="bi bi-eye-slash mt-2 ms-0" id="toggleOldPassword"></i>
                     </div>
@@ -109,6 +109,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         </div>
         </form>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous">
+    </script>
     <script>
         const toggleOldPassword = document.querySelector('#toggleOldPassword');
         const oldPassword = document.querySelector('#oldPassword');
@@ -119,7 +121,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         const toggleConfirmNewPassword = document.querySelector('#toggleConfirmNewPassword');
         const confirmNewPassword = document.querySelector('#confirmNewPassword');
 
-        toggleOldPassword.addEventListener('click', () => {
+        toggleOldPassword.addEventListener('click', function() {
             const type = oldPassword
                 .getAttribute('type') === 'password' ?
                 'text' : 'password';
@@ -127,7 +129,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             this.classList.toggle('bi-eye');
         });
 
-        toggleNewPassword.addEventListener('click', () => {
+        toggleNewPassword.addEventListener('click', function() {
             const type = newPassword
                 .getAttribute('type') === 'password' ?
                 'text' : 'password';
@@ -135,12 +137,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             this.classList.toggle('bi-eye');
         });
 
-        toggleConfirmNewPassword.addEventListener('click', () => {
+        toggleConfirmNewPassword.addEventListener('click', function() {
             const type = confirmNewPassword
                 .getAttribute('type') === 'password' ?
                 'text' : 'password';
             confirmNewPassword.setAttribute('type', type);
-            // TODO:  eye icon change during toggle not working
             this.classList.toggle('bi-eye');
         });
     </script>

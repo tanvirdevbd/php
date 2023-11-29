@@ -6,7 +6,7 @@ if (!$_SESSION["id"]) {
 
 include 'connect.php';
 
-$success = 0;
+$successValue = 0;
 $errorValue = 0;
 $errorMessage = "";
 
@@ -143,7 +143,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $res = $stmt->execute(['firstname' => $firstname, 'middlename' => $middlename, 'lastname' => $lastname, 'phone' => $phone, 'email' => $email, 'password' => $password, 'retypepassword' => $retypepassword, 'class' => $class, 'gender' => $gender, 'division' => $division, 'district' => $district, 'upazila' => $upazila, 'address' => $address, 'std_img' => $std_img, 'user_type' => $user_type, 'gallery_images' => $gallery_images]);
 
         if ($res) {
-            $success = "Updated Successfully";
+            $successValue = "Updated Successfully";
         } else {
             $errorMessage = "Update Failed";
         }
@@ -165,12 +165,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <body>
 
     <?php
-    if ($success &&  isset($_GET['search'])) {
+    if ($successValue &&  isset($_GET['search'])) {
         $searchTerm = $_GET['search'];
-        echo "<div class='alert alert-success' role='alert'>" . $success . "</div>";
+        echo "<div class='alert alert-success' role='alert'>" . $successValue . "</div>";
         echo "<meta http-equiv='refresh' content='1;url=dashboard.php?search=$searchTerm'>";
-    } else if ($success) {
-        echo "<div class='alert alert-success' role='alert'>" . $success . "</div>";
+    } else if ($successValue) {
+        echo "<div class='alert alert-success' role='alert'>" . $successValue . "</div>";
         echo "<meta http-equiv='refresh' content='1;url=dashboard.php'>";
     } else if ($errorValue) {
         echo '<div class="alert alert-danger" role="alert">' . $errorMessage . '</div>';
