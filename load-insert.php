@@ -37,7 +37,7 @@ include 'connect.php';
             </div>
             <!-- re type password -->
             <div class="mb-2 me-2">
-                <input type="password" class="form-control" id="retypepassword" name="retypepassword" required placeholder="Re Enter Password">
+                <input type="password" class="form-control" id="retypepassword" name="retypepassword" placeholder="Re Enter Password" required>
             </div>
             <!-- phone  -->
             <div class="mb-2 me-2">

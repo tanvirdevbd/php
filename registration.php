@@ -2,45 +2,90 @@
 include 'connect.php';
 
 $successValue = 0;
-$error = 0;
-$errorMessage = "";
+$errorValue = 0;
+$message = array("errorMessage" => "", "successMessage" => "");
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    // TODO: remaining validation apply 
-    $filename = $_FILES["uploadfile"]["name"];
-    $tempname = $_FILES["uploadfile"]["tmp_name"];
-    $folder = "images/" . $filename;
-    move_uploaded_file($tempname, $folder);
-
-    $firstname = $_POST['firstname'];
+    $firstname = $_POST["firstname"];
     $middlename = $_POST['middlename'];
     $lastname = $_POST['lastname'];
+
     $email = $_POST['email'];
-
-    $sql = "SELECT * FROM `registration` WHERE email='$email' ";
-
+    $sql = "SELECT * from `registration` WHERE email=:email";
     $stmt = $pdo->prepare($sql);
-
-    $stmt->execute();
-
-    $resEmail = $stmt->fetch(PDO::FETCH_ASSOC);
-
-    if (!$resEmail) {
+    $stmt->execute(['email' => $email]);
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+    if ($row) {
+        $errorValue = 1;
+        $message["errorMessage"] = "Email already exists";
+    } else {
         $password = $_POST['password'];
+        if (strlen($password) < 8) {
+            $errorValue = 1;
+            $message["errorMessage"] = "New Password length less than 8";
+        } else if (!preg_match('@[A-Z]@', $password)) {
+            $errorValue = 1;
+            $message["errorMessage"] = "Uppercase not included in your password";
+        } else if (!preg_match('@[a-z]@', $password)) {
+            $errorValue = 1;
+            $message["errorMessage"] = "Lowercase not included in your password";
+        } else if (!preg_match('@[0-9]@', $password)) {
+            $errorValue = 1;
+            $message["errorMessage"] = "Number not included in your password";
+        }
         $retypepassword = $_POST['retypepassword'];
-        $class = $_POST['class'];
-        $gender = $_POST['gender'];
-        $division = $_POST['division'];
-        $district = $_POST['district'];
-        $upazila = $_POST['upazila'];
-        $address = $_POST['address'];
-        $std_img = $folder;
+        if ($password != $retypepassword) {
+            $message["errorMessage"] = "New Password & Confirmed password not matched";
+        }
 
         $phone = $_POST['phone'];
         $pattern = "/^(?:\+88|88)?(01[3-9]\d{8})$/";
         if (!preg_match($pattern, $phone)) {
-            $errorMessage = "Phone number is not valid BD number";
-        } else {
+            $errorValue = 1;
+            $message["errorMessage"] = "Phone number is not valid BD number";
+        }
+
+        // profile image 
+        $std_img = "";
+        $std_img_prof = "";
+        $extension_prof = array("jpeg", "jpg", "png", "gif");
+        $maxsize_prof = 120 * 1024;
+        $file_name_prof = $_FILES["uploadfile"]["name"];
+        if (strlen($file_name_prof)) {
+            $file_tmp_prof = $_FILES["uploadfile"]["tmp_name"];
+            $file_size_prof = $_FILES["uploadfile"]["size"];
+            $ext_prof = pathinfo($file_name_prof, PATHINFO_EXTENSION);
+
+            if (in_array($ext_prof, $extension_prof)) {
+                if ($file_size_prof < $maxsize_prof) {
+                    if (!file_exists("images/" . $file_name_prof)) {
+                        $std_img_prof = "images/" . $file_name_prof;
+                        move_uploaded_file($file_tmp_prof, $std_img_prof);
+                    } else {
+                        $filename_prof = basename($file_name_prof, $ext_prof);
+                        $newFileName_prof = $filename_prof . time() . "." . $ext_prof;
+                        $std_img_prof = "images/" . $newFileName_prof;
+                        move_uploaded_file($file_tmp_prof, $std_img_prof);
+                    }
+                } else {
+                    $errorValue = 1;
+                    $message["errorMessage"] = "File size is larger than 120KB";
+                }
+            } else {
+                $errorValue = 1;
+                $message["errorMessage"] = "Only jpeg jpg png gif type image support for profile";
+            }
+            $std_img = $std_img_prof;
+        }
+
+        $gender = $_POST['gender'];
+        $class = $_POST['class'];
+        $division = $_POST['division'];
+        $district = $_POST['district'];
+        $upazila = $_POST['upazila'];
+        $address = $_POST['address'];
+
+        if (!$errorValue) {
             $sql = "INSERT INTO `registration`(std_img, firstname, middlename, lastname, phone, email, password, retypepassword, class, gender, division, district, upazila, address) VALUES(:std_img, :firstname, :middlename, :lastname, :phone, :email, :password, :retypepassword, :class, :gender, :division, :district, :upazila,  :address)";
 
             $stmt = $pdo->prepare($sql);
@@ -48,13 +93,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $result = $stmt->execute(['std_img' => $std_img, 'firstname' => $firstname, 'middlename' => $middlename, 'lastname' => $lastname, 'phone' => $phone,  'email' => $email,  'password' => $password,  'retypepassword' => $retypepassword, 'class' => $class, 'gender' => $gender, 'division' => $division, 'district' => $district, 'upazila' => $upazila, 'address' => $address]);
 
             if ($result) {
-                $successValue = "Registration Successful";
+                $successValue = 1;
+                $message["successMessage"] = "Registration Successful";
             } else {
-                $errorMessage = "Registration Failed";
+                $message["errorMessage"] = "Registration Failed";
             }
         }
-    } else {
-        $errorMessage = "Email already exists give a new email for complete registration";
     }
 }
 ?>
@@ -74,10 +118,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     <?php
     if ($successValue) {
-        echo "<div class='alert alert-success' role='alert'>" . $successValue . "</div>";
+        echo "<div class='alert alert-success' role='alert'>" . $message["successMessage"] . "</div>";
         echo "<meta http-equiv='refresh' content='1;url=login.php'>";
-    } else if ($errorMessage) {
-        echo '<div class="alert alert-danger" role="alert">' . $errorMessage . '</div>';
+    } else if ($errorValue) {
+        echo '<div class="alert alert-danger" role="alert">' . $message["errorMessage"] . '</div>';
     }
     ?>
 
@@ -92,12 +136,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     <div class="mb-2 me-2">
                         <input type="text" class="form-control" id="firstname" name="firstname" placeholder="Enter First Name" required>
                     </div>
-
                     <!-- middlename  -->
                     <div class="mb-2 me-2">
                         <input type="text" class="form-control" id="middlename" name="middlename" placeholder="Enter Middle Name">
                     </div>
-
                     <!-- lastname  -->
                     <div class="mb-2 me-2">
                         <input type="text" class="form-control" id="lastname" name="lastname" placeholder="Enter Last Name" required>
@@ -113,7 +155,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                     <!-- re type password -->
                     <div class="mb-2 me-2">
-                        <input type="password" class="form-control" id="retypepassword" name="retypepassword" required placeholder="Re Enter Password">
+                        <input type="password" class="form-control" id="retypepassword" name="retypepassword" placeholder="Re Enter Password" required>
                     </div>
                     <!-- phone  -->
                     <div class="mb-2 me-2">

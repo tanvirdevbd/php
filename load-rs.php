@@ -20,21 +20,25 @@ if ($sessionUser && $_POST['type'] == "search") {
         $rowNum = 0;
         foreach ($totalRes as $key => $row) {
             $gallery_imagesArr = explode(',', $row['gallery_images']);
+            $glrCount = count($gallery_imagesArr);
             $rowNum++;
             $trSingle = "
         <tr>
             <th scope='row'>{$rowNum}</th>       
-            <td>
-                <img src='{$row['std_img']}' alt='Profile image' width='80' height='80' style='border-radius: 50%;'>
-            </td>
-            <td class='d-flex flex-wrap gallery-area'>";
-            if (count($gallery_imagesArr)) {
+            <td style='width: 5%;'>";
+            $profileImage  = $row['std_img'] ? $row['std_img'] : "https://rb.gy/b8h6ei";
+            $trSingle .= "<img src='{$profileImage}' alt='Profile image' width='80' height='80' style='border-radius: 50%;'>
+        </td>
+        <td class='d-flex flex-wrap gallery-area' style='width: 5%;'>";
+            if ($glrCount > 1) {
                 foreach ($gallery_imagesArr as $x => $singleImage) {
-                    $trSingle .= "<img src='photo_gallery/{$singleImage}' alt='gallery_images'  width='40' height='40' class='single-image'>";
+                    $trSingle .= "<img src='photo_gallery/{$singleImage}' alt='gallery_images' width='40' height='40' class='single-image'>";
                 }
-            };
+            } else {
+                $trSingle .= "<img src='https://rb.gy/tcflqu' alt='gallery_images' width='40' height='40' class='single-image'>";
+            }
             $trSingle .= "
-            </td>
+        </td>
             <td>{$row['firstname']}</td>
             <td>{$row['middlename']}</td>
             <td>{$row['lastname']}</td>
